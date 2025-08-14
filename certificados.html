@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Certificado de Afiliación</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    body {
+      font-family: Tahoma, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .formulario {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin: 30px auto 20px;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .formulario input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .formulario button {
+      background-color: #005baa;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .botones-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px auto;
+      max-width: 800px;
+    }
+
+    .botones-container button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      color: white;
+      min-width: 180px;
+    }
+
+    #boton-descarga { background-color: #28a745; }
+    #boton-pdf { background-color: #dc3545; }
+    #boton-whatsapp { background-color: #25D366; }
+    #boton-email { background-color: #17a2b8; }
+    #boton-volver { background-color: #6c757d; }
+
+    #contenido-certificado {
+      width: 210mm;
+      min-height: 260mm;
+      margin: 20px auto;
+      padding: 10mm 20mm;
+      background-image: url('https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/logo.jpg');
+      background-position: center 20%;
+      background-repeat: no-repeat;
+      background-size: 90%;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .encabezado-certificado {
+      text-align: center;
+      font-size: 17px;
+      line-height: 1.4;
+      margin-bottom: 20px;
+      margin-top: 0;
+    }
+
+    .texto-justificado {
+      text-align: justify;
+      font-size: 9px;
+      line-height: 1.5;
+      margin: 0px 0;
+    }
+
+    .titulo-certificado {
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.5;
+      margin: 30px 0;
+    }
+
+    .datos-certificado {
+      text-align: left;
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 20px 0;
+    }
+
+    .firma-fondo {
+      width: 270px;
+      position: absolute;
+      bottom: 25mm;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .sello-derecha {
+      width: 140px;
+      position: absolute;
+      bottom: 55mm;
+      right: 20mm;
+    }
+
+    .sello2-fondo {
+      width: 180px;
+      position: absolute;
+      bottom: 45mm;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .pie-certificado {
+      position: absolute;
+      bottom: 20mm;
+      width: calc(100% - 40mm);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    #cedula {
+      background-color: #e3f2fd;
+      font-weight: bold;
+      border: 2px solid #2196f3;
+    }
+
+    .whatsapp-control, .email-control {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin: 15px auto;
+      display: none;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+    }
+    
+    .whatsapp-control .cerrar, .email-control .cerrar {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #666;
+    }
+    
+    #numero-whatsapp, #email-destino {
+      width: 90%;
+      padding: 10px 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    #numero-whatsapp {
+      border: 2px solid #25D366;
+      background-color: #f0fff4;
+    }
+    
+    #email-destino {
+      border: 2px solid #17a2b8;
+      background-color: #f0f8ff;
+    }
+    
+    #confirmar-whatsapp, #confirmar-email {
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      width: 100%;
+    }
+    
+    #confirmar-whatsapp {
+      background-color: #25D366;
+    }
+    
+    #confirmar-email {
+      background-color: #17a2b8;
+    }
+    
+    .whatsapp-info, .email-info {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+    
+    .error-message {
+      color: #dc3545;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="formulario" class="formulario">
+    <h2>Buscar documento</h2>
+    <input type="text" id="cedula" placeholder="Número de cédula o Nombre" required />
+    <input type="text" id="nombre-editable" placeholder="Nombre completo" style="display:none;" />
+    <input type="text" id="cedula-editable" placeholder="Cédula" style="display:none;" />
+    <input type="text" id="fecha-editable" placeholder="Fecha de afiliación" style="display:none;" />
+    <input type="text" id="registro-editable" placeholder="Registro Nº" style="display:none;" />
+    <input type="text" id="folio-editable" placeholder="Folio Nº" style="display:none;" />
+    <input type="text" id="renglon-editable" placeholder="Renglón Nº" style="display:none;" />
+    <input type="text" id="direccion-editable" placeholder="Dirección" style="display:none;" />
+    <button type="submit">Consultar</button>
+  </form>
+
+  <div class="botones-container">
+    <button id="boton-descarga" style="display:none;">Descargar Imagen (PNG)</button>
+    <button id="boton-pdf" style="display:none;">Descargar PDF</button>
+    <button id="boton-whatsapp" style="display:none;">Enviar por WhatsApp</button>
+    <button id="boton-email" style="display:none;">Enviar por Email</button>
+    <button id="boton-volver" onclick="window.location.href='panelprincipal.html'">Volver al Panel</button>
+  </div>
+
+  <div class="whatsapp-control" id="whatsapp-control">
+    <button class="cerrar" onclick="document.getElementById('whatsapp-control').style.display='none'">×</button>
+    <h3>Enviar por WhatsApp</h3>
+    <input type="text" id="numero-whatsapp" placeholder="Número de celular (10 dígitos)" maxlength="10" />
+    <div class="error-message" id="whatsapp-error">Ingrese un número válido de 10 dígitos</div>
+    <div class="whatsapp-info">Solo números colombianos. Ejemplo: 3123456789</div>
+    <button id="confirmar-whatsapp">Enviar Certificado</button>
+  </div>
+
+  <div class="email-control" id="email-control">
+    <button class="cerrar" onclick="document.getElementById('email-control').style.display='none'">×</button>
+    <h3>Enviar por Correo Electrónico</h3>
+    <input type="email" id="email-destino" placeholder="Correo electrónico del destinatario" required />
+    <div class="error-message" id="email-error">Ingrese un correo electrónico válido</div>
+    <button id="confirmar-email">Enviar Certificado</button>
+  </div>
+
+  <div id="contenido-certificado" style="display:none;">
+    <div class="encabezado-certificado">
+      <br>
+      <strong>REPUBLICA DE COLOMBIA</strong><br>
+      <strong>DEPARTAMENTO DEL META</strong><br>
+      <strong>PUERTO GAITÁN – META</strong><br>
+      <strong>JUNTA DE ACCIÓN COMUNAL</strong><br>
+      <strong>ASENTAMIENTO HUMANO BATEAS</strong><br>
+      Personería Jurídica No. 101 del 20 de noviembre de 2.012.
+    </div>
+    <div class="texto-justificado">
+      El suscrito presidente del asentamiento humano Bateas, del Municipio de Puerto Gaitán Meta, fundamentado en la ley 1551 del 2012 que modifica el artículo 91 de la ley 136 de 1994, el cual reza en su artículo 91: Funciones. Los Alcaldes ejercerán…y además de estas, en el literal F numeral 6. Con relación a la prosperidad integral de su región; Expedirá la certificación para acreditar la residencia a aquellas personas que residen  en el territorio del área de influencia de los proyectos de exploración y explotación petrolera y minería en general, y que aspiren acceder a labores como mano de  obra no calificada y calificada, Los alcaldes expedirán dichos certificados con base en LOS REGISTROS ELECTORALES O DE SISBEN , ASI COMO LOS REGISTROS DE LOS AFILIADOS DE LAS JUNTAS DE ACCIÓN COMUNAL
+    </div>
+
+    <div class="titulo-certificado">
+      <span style="font-size:18px;">CONSTANCIA DE AFILIACIÓN</span><br>
+      <strong>La Junta de Acción Comunal del Barrio Bateas</strong><br>
+      HACE CONSTAR:<br>
+      Que la información suministrada reposa en el libro de afiliados:
+    </div>
+
+    <div class="datos-certificado">
+      NOMBRE: <strong id="nombre-cert"></strong><br>
+      CÉDULA: <strong id="cedula-cert"></strong><br>
+      FECHA DE AFILIACIÓN: <strong id="fecha-cert"></strong><br>
+      REGISTRO Nº: <strong id="registro-cert"></strong><br>
+      FOLIO Nº: <strong id="folio-cert"></strong><br>
+      RENGLÓN Nº: <strong id="renglon-cert"></strong><br>
+      DIRECCIÓN: <strong id="direccion-cert"></strong><br><br>
+      La presente constancia se expide a solicitud del interesado, <strong id="fecha-emision"></strong> y tiene vigencia de 6 meses a partir de la fecha de su expedición.
+    </div>
+    <br>Atentamente,<br><br><br><br>
+
+    <img src="https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/sello.png" class="sello-derecha" alt="Sello">
+    <img src="https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/firma.png" class="firma-fondo" alt="Firma">
+    <img src="https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/sello2.png" class="sello2-fondo" alt="Sello">
+
+    <div style="text-align:center;margin-top:30px;">
+      __________________________<br>
+      <strong>JUAN CARLOS USECHE B</strong><br>
+      Presidente<br>
+      jacbateasgaitan@gmail.com
+    </div>
+    <br><br>
+    <div style="text-align:justify;font-size:12px;line-height:1.3;margin-top:25px;"><br><br>
+      Código penal colombiano. "ley 599 de 2000 art. 287.falsedad material en documento público, el que falsifique documentos públicos que pueda servir de prueba, incurrirá en prisión de 3 a 6 años". 
+    </div>
+  </div>
+
+<script>
+  // Configuración Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyCERQc8srBtLuMe6Jw944WsO1mySohMpkU",
+    authDomain: "junta-bateas-sector-3.firebaseapp.com",
+    projectId: "junta-bateas-sector-3",
+    storageBucket: "junta-bateas-sector-3.appspot.com",
+    messagingSenderId: "913958453084",
+    appId: "1:913958453084:web:5324de6958dfff01980b99"
+  };
+
+  // Inicializar Firebase
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+  const storage = firebase.storage();
+  const { jsPDF } = window.jspdf;
+
+  // Inicializar EmailJS
+  emailjs.init('TU_USER_ID_DE_EMAILJS'); // Reemplaza con tu User ID
+
+  // Variables globales
+  let personaEncontrada = null;
+
+  // Función para formatear cédula
+  function formatearCedula(cedula) {
+    if (!cedula) return '';
+    return cedula.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  // Función para formatear fecha
+  function formatearFecha(fecha) {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    if (isNaN(date)) return fecha;
+    return date.toLocaleDateString('es-CO');
+  }
+
+  // Cargar datos desde Firebase
+  function cargarDatos() {
+    return new Promise((resolve, reject) => {
+      database.ref('afiliaciones').once('value')
+        .then((snapshot) => {
+          const data = snapshot.val();
+          resolve(data ? Object.values(data) : []);
+        })
+        .catch(reject);
+    });
+  }
+
+  // Mostrar certificado
+  function mostrarCertificado(persona) {
+    document.getElementById("nombre-cert").textContent = persona.nombre;
+    document.getElementById("cedula-cert").textContent = formatearCedula(persona.cedula);
+    document.getElementById("fecha-cert").textContent = formatearFecha(persona.fecha);
+    document.getElementById("registro-cert").textContent = formatearCedula(persona.registro);
+    document.getElementById("folio-cert").textContent = persona.folio;
+    document.getElementById("renglon-cert").textContent = persona.renglon;
+    document.getElementById("direccion-cert").textContent = persona.direccion;
+    document.getElementById("fecha-emision").textContent = formatearFecha(new Date());
+    
+    document.getElementById("contenido-certificado").style.display = 'block';
+    document.getElementById("boton-descarga").style.display = 'block';
+    document.getElementById("boton-pdf").style.display = 'block';
+    document.getElementById("boton-whatsapp").style.display = 'block';
+    document.getElementById("boton-email").style.display = 'block';
+  }
+
+  // Buscar persona
+  document.getElementById("formulario").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const cedula = document.getElementById("cedula").value.trim();
+    
+    try {
+      const baseDatos = await cargarDatos();
+      const persona = baseDatos.find(p => 
+        String(p.cedula).replace(/\D/g, '') === cedula.replace(/\D/g, '') || 
+        p.nombre.toLowerCase().includes(cedula.toLowerCase())
+      );
+
+      if (!persona) throw new Error("No se encontró el documento");
+      
+      personaEncontrada = persona;
+      mostrarCertificado(persona);
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+
+  // Capturar certificado (optimizado para PDF y PNG)
+  async function capturarCertificado(formato = 'png') {
+    const elemento = document.getElementById("contenido-certificado");
+    const options = {
+      scale: formato === 'pdf' ? 2 : 2, // Mayor escala para PDF
+      logging: true,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#FFFFFF',
+      scrollX: 0,
+      scrollY: 0
+    };
+    
+    return await html2canvas(elemento, options);
+  }
+
+  // Descargar PNG (optimizado)
+  document.getElementById("boton-descarga").addEventListener("click", async function() {
+    try {
+      const canvas = await capturarCertificado('png');
+      // Reducir calidad para PNG (85% como balance)
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png', 0.85);
+      link.download = `certificado_${personaEncontrada.cedula}.png`;
+      link.click();
+    } catch (error) {
+      alert("Error al generar la imagen");
+    }
+  });
+
+  // Descargar PDF (optimizado)
+  document.getElementById("boton-pdf").addEventListener("click", async function() {
+    try {
+      const canvas = await capturarCertificado('pdf');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      // Optimización para PDF
+      const imgData = canvas.toDataURL('image/jpeg', 0.85); // Usar JPEG para PDF con 85% calidad
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`certificado_${personaEncontrada.cedula}.pdf`);
+    } catch (error) {
+      alert("Error al generar el PDF");
+    }
+  });
+
+  // Validar número de WhatsApp
+  function validarNumeroWhatsApp(numero) {
+    const soloNumeros = numero.replace(/\D/g, '');
+    return soloNumeros.length === 10 && /^3[0-9]{9}$/.test(soloNumeros);
+  }
+
+  // Mostrar/ocultar error de WhatsApp
+  document.getElementById("numero-whatsapp").addEventListener("input", function() {
+    const numero = this.value;
+    const errorElement = document.getElementById("whatsapp-error");
+    
+    if (numero && !validarNumeroWhatsApp(numero)) {
+      errorElement.style.display = 'block';
+    } else {
+      errorElement.style.display = 'none';
+    }
+  });
+
+  // Enviar por WhatsApp (versión mejorada)
+  document.getElementById("boton-whatsapp").addEventListener("click", function() {
+    document.getElementById("whatsapp-control").style.display = 'block';
+  });
+
+  document.getElementById("confirmar-whatsapp").addEventListener("click", async function() {
+    const numeroInput = document.getElementById("numero-whatsapp");
+    const numero = numeroInput.value.trim();
+    
+    if (!validarNumeroWhatsApp(numero)) {
+      document.getElementById("whatsapp-error").style.display = 'block';
+      numeroInput.focus();
+      return;
+    }
+    
+    try {
+      alert("Preparando certificado para WhatsApp...");
+      const canvas = await capturarCertificado('png');
+      
+      // 1. Subir a Firebase Storage
+      const blob = await new Promise(resolve => {
+        canvas.toBlob(resolve, 'image/png', 0.85); // 85% calidad
+      });
+      
+      const nombreArchivo = `certificados/${personaEncontrada.cedula}_${Date.now()}.png`;
+      const fileRef = storage.ref().child(nombreArchivo);
+      await fileRef.put(blob);
+      const urlDescarga = await fileRef.getDownloadURL();
+      
+      // 2. Formatear número y mensaje
+      const numeroWhatsApp = `57${numero.replace(/\D/g, '')}`;
+      const mensaje = `*Certificado de Afiliación* 🏛️\n\n` +
+                     `*Nombre:* ${personaEncontrada.nombre}\n` +
+                     `*Cédula:* ${formatearCedula(personaEncontrada.cedula)}\n\n` +
+                     `Descargar certificado: ${urlDescarga}\n\n` +
+                     `_Este enlace estará disponible por 24 horas_`;
+      
+      // 3. Abrir WhatsApp
+      window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`, '_blank');
+      
+      // 4. Limpiar y ocultar
+      document.getElementById("whatsapp-control").style.display = 'none';
+      numeroInput.value = '';
+      
+    } catch (error) {
+      console.error("Error en WhatsApp:", error);
+      alert("Ocurrió un error. Por favor intente nuevamente.");
+    }
+  });
+
+  // Validar email
+  function validarEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  // Mostrar/ocultar error de email
+  document.getElementById("email-destino").addEventListener("input", function() {
+    const email = this.value;
+    const errorElement = document.getElementById("email-error");
+    
+    if (email && !validarEmail(email)) {
+      errorElement.style.display = 'block';
+    } else {
+      errorElement.style.display = 'none';
+    }
+  });
+
+  // Enviar por Email
+  document.getElementById("boton-email").addEventListener("click", function() {
+    document.getElementById("email-control").style.display = 'block';
+  });
+
+  document.getElementById("confirmar-email").addEventListener("click", async function() {
+    const email = document.getElementById("email-destino").value.trim();
+    
+    if (!validarEmail(email)) {
+      document.getElementById("email-error").style.display = 'block';
+      document.getElementById("email-destino").focus();
+      return;
+    }
+    
+    try {
+      alert("Generando y enviando certificado por email...");
+      const canvas = await capturarCertificado('pdf');
+      
+      // 1. Convertir a blob
+      const blob = await new Promise(resolve => {
+        canvas.toBlob(resolve, 'image/jpeg', 0.85); // 85% calidad para email
+      });
+      
+      // 2. Subir a Firebase Storage temporalmente
+      const nombreArchivo = `certificados/${personaEncontrada.cedula}_${Date.now()}.jpg`;
+      const fileRef = storage.ref().child(nombreArchivo);
+      await fileRef.put(blob);
+      const urlDescarga = await fileRef.getDownloadURL();
+      
+      // 3. Configurar parámetros para EmailJS
+      const templateParams = {
+        to_email: email,
+        nombre: personaEncontrada.nombre,
+        cedula: formatearCedula(personaEncontrada.cedula),
+        fecha: formatearFecha(new Date()),
+        enlace_certificado: urlDescarga
+      };
+      
+      // 4. Enviar email (configura SERVICE_ID y TEMPLATE_ID en EmailJS)
+      await emailjs.send('default_service', 'template_certificado', templateParams);
+      
+      alert(`Certificado enviado exitosamente a ${email}`);
+      document.getElementById("email-control").style.display = 'none';
+      document.getElementById("email-destino").value = '';
+      
+    } catch (error) {
+      console.error("Error al enviar email:", error);
+      alert("Ocurrió un error al enviar el correo. Por favor intente nuevamente.");
+    }
+  });
+
+  // Edición de campos
+  ["nombre", "cedula", "fecha", "registro", "folio", "renglon", "direccion"].forEach(id => {
+    const editable = document.getElementById(`${id}-editable`);
+    if (editable) {
+      editable.addEventListener("input", function() {
+        const campo = document.getElementById(`${id}-cert`);
+        if (campo) campo.textContent = this.value;
+      });
+    }
+  });
+</script>
+</body>
+</html>

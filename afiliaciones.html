@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Afiliación - Junta de Acción Comunal</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        /* Estilos anteriores (se mantienen igual) */
+        :root {
+            --verde-primario: #4CAF50;
+            --verde-secundario: #388E3C;
+            --amarillo-primario: #FFC107;
+            --amarillo-secundario: #FFA000;
+            --gris-claro: #f5f5f5;
+            --gris-oscuro: #424242;
+            --blanco: #ffffff;
+            --rojo-primario: #F44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--gris-claro);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--verde-primario), var(--amarillo-primario));
+            color: var(--blanco);
+            padding: 1.2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 1.4rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .header h2 {
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        .form-container {
+            background-color: var(--blanco);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-title {
+            color: var(--verde-primario);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gris-claro);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gris-oscuro);
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--verde-primario);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--verde-primario);
+            color: var(--blanco);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--verde-secundario);
+        }
+        
+        .btn-secondary {
+            background-color: var(--amarillo-primario);
+            color: var(--gris-oscuro);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--amarillo-secundario);
+        }
+        
+        .btn-danger {
+            background-color: var(--rojo-primario);
+            color: var(--blanco);
+        }
+        
+        .btn-danger:hover {
+            background-color: #D32F2F;
+        }
+        
+        .btn-back {
+            background-color: #757575;
+            color: var(--blanco);
+        }
+        
+        .btn-back:hover {
+            background-color: #616161;
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .last-record {
+            background-color: #E3F2FD;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .last-record h4 {
+            color: #0D47A1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .hint {
+            color: #616161;
+            font-size: 0.8rem;
+            display: block;
+            margin-top: 0.3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .form-container {
+                padding: 1.5rem;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <h1>JUNTA DE ACCIÓN COMUNAL SECTOR 3</h1>
+        <h2>REGISTRO DE AFILIACIÓN DEL USUARIO</h2>
+    </div>
+    
+    <div class="container">
+        <div class="form-container">
+            <h3 class="form-title">Formulario de Afiliación</h3>
+            
+            <!-- Sección de último registro -->
+            <div class="last-record">
+                <h4><i class="fas fa-info-circle"></i> Último Registro Ingresado</h4>
+                <p id="ultimoRegistro">Cargando...</p>
+            </div>
+            
+            <form id="afiliacionForm">
+                <div class="form-group">
+                    <label for="nombre">Nombre Completo</label>
+                    <input type="text" id="nombre" class="form-control" required 
+                           onkeypress="return soloLetras(event)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cedula">Cédula</label>
+                    <input type="text" id="cedula" class="form-control" required 
+                           maxlength="30"
+                           onkeypress="return soloNumeros(event)" 
+                           oninput="formatearCedula(this)">
+                    <small class="hint">Formato: 1.234.567.890 (mínimo 7 dígitos)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha">Fecha de Afiliación</label>
+                    <input type="date" id="fecha" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registro">Registro</label>
+                    <input type="text" id="registro" class="form-control" required 
+                           onkeypress="return soloNumeros(event)" 
+                           oninput="formatearPuntoMil(this)">
+                    <small class="hint">Último registro: <span id="ultimoNumeroRegistro">0</span></small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="folio">Folio</label>
+                    <input type="text" id="folio" class="form-control" required 
+                           onkeypress="return soloNumeros(event)" 
+                           oninput="formatearPuntoMil(this)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="renglon">Renglón</label>
+                    <input type="text" id="renglon" class="form-control" required 
+                           onkeypress="return soloNumeros(event)" 
+                           oninput="formatearPuntoMil(this)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <textarea id="direccion" class="form-control" rows="3" required></textarea>
+                </div>
+                
+                <div class="buttons-container">
+                    <div>
+                        <button type="button" class="btn btn-primary" id="guardarBtn">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="editarBtn">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-danger" id="borrarBtn">
+                            <i class="fas fa-trash-alt"></i> Borrar
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-back" id="volverBtn">
+                        <i class="fas fa-arrow-left"></i> Volver al Menú
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 1. Configuración de Firebase (TUS CREDENCIALES)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCERQc8srBtLuMe6Jw944WsO1mySohMpkU",
+            authDomain: "junta-bateas-sector-3.firebaseapp.com",
+            projectId: "junta-bateas-sector-3",
+            storageBucket: "junta-bateas-sector-3.firebasestorage.app",
+            messagingSenderId: "913958453084",
+            appId: "1:913958453084:web:5324de6958dfff01980b99"
+        };
+
+        // 2. Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const afiliacionesRef = database.ref('afiliaciones');
+
+        // 3. Variables globales
+        let ultimoRegistro = null;
+        let editMode = false;
+        let currentAfiliacionId = null;
+
+        // 4. Cargar último registro al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarUltimoRegistro();
+        });
+
+        // 5. Validaciones de campos
+        function soloLetras(e) {
+            const key = e.key;
+            const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/;
+            if (!regex.test(key) && key !== 'Backspace') {
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        }
+
+        function soloNumeros(e) {
+            const key = e.key;
+            const regex = /^[0-9]$/;
+            if (!regex.test(key) && key !== 'Backspace') {
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        }
+
+        function formatearCedula(input) {
+            let value = input.value.replace(/\./g, '');
+            if (value.length > 0) {
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            input.value = value;
+        }
+
+        function formatearPuntoMil(input) {
+            let value = input.value.replace(/\./g, '');
+            if (value.length > 0) {
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            input.value = value;
+        }
+
+        // 6. Funciones de Firebase
+        function cargarUltimoRegistro() {
+            afiliacionesRef.orderByChild('fechaRegistro').limitToLast(1).once('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const key = Object.keys(data)[0];
+                    ultimoRegistro = data[key];
+                    ultimoRegistro.id = key;
+                    mostrarUltimoRegistro();
+                } else {
+                    document.getElementById('ultimoRegistro').textContent = 'No hay registros previos';
+                }
+            });
+        }
+
+        function mostrarUltimoRegistro() {
+            const ultimoRegistroDiv = document.getElementById('ultimoRegistro');
+            
+            if (ultimoRegistro) {
+                ultimoRegistroDiv.innerHTML = `
+                    <strong>Nombre:</strong> ${ultimoRegistro.nombre}<br>
+                    <strong>Cédula:</strong> ${ultimoRegistro.cedula}<br>
+                    <strong>Registro:</strong> ${ultimoRegistro.registro}<br>
+                    <strong>folio:</strong> ${ultimoRegistro.folio}<br>
+                    <strong>renglon:</strong> ${ultimoRegistro.renglon}<br>
+                    <strong>Fecha:</strong> ${new Date(ultimoRegistro.fecha).toLocaleDateString()}
+                `;
+                document.getElementById('ultimoNumeroRegistro').textContent = 
+                    ultimoRegistro.registro.replace(/\./g, '');
+            }
+        }
+
+        // 7. Funciones de los botones
+        document.getElementById('guardarBtn').addEventListener('click', guardarAfiliacion);
+        document.getElementById('editarBtn').addEventListener('click', editarAfiliacion);
+        document.getElementById('borrarBtn').addEventListener('click', borrarAfiliacion);
+        document.getElementById('volverBtn').addEventListener('click', () => {
+            if (confirm('¿Volver al menú principal?')) {
+                window.location.href = 'panelprincipal.html';
+            }
+        });
+
+       // 8. Guardar en Firebase (función modificada)
+function guardarAfiliacion() {
+    const nombre = document.getElementById('nombre').value.trim();
+    const cedula = document.getElementById('cedula').value.replace(/\./g, '');
+    const fecha = document.getElementById('fecha').value;
+    const registro = document.getElementById('registro').value.replace(/\./g, '');
+    const folio = document.getElementById('folio').value.replace(/\./g, '');
+    const renglon = document.getElementById('renglon').value.replace(/\./g, '');
+    const direccion = document.getElementById('direccion').value.trim();
+
+    // Validaciones comunes
+    if (cedula.length < 7) {
+        alert('La cédula debe tener al menos 7 dígitos');
+        return;
+    }
+
+    // SOLO validar secuencia de registros para NUEVOS registros
+    if (!editMode && ultimoRegistro && parseInt(registro) <= parseInt(ultimoRegistro.registro.replace(/\./g, ''))) {
+        alert(`El registro debe ser mayor al último (${ultimoRegistro.registro})`);
+        return;
+    }
+
+    if (confirm(editMode ? '¿Confirmar cambios?' : '¿Guardar nueva afiliación?')) {
+        const afiliacionData = {
+            nombre,
+            cedula,
+            fecha,
+            registro,
+            folio,
+            renglon,
+            direccion,
+            fechaRegistro: new Date().toISOString()
+        };
+
+        if (editMode && currentAfiliacionId) {
+            // Editar registro existente
+            afiliacionesRef.child(currentAfiliacionId).update(afiliacionData)
+                .then(() => {
+                    alert('Afiliación actualizada correctamente');
+                    resetForm();
+                    cargarUltimoRegistro();
+                })
+                .catch(error => alert('Error al actualizar: ' + error.message));
+        } else {
+            // Nuevo registro
+            afiliacionesRef.push(afiliacionData)
+                .then(() => {
+                    alert('Afiliación guardada correctamente');
+                    resetForm();
+                    cargarUltimoRegistro();
+                })
+                .catch(error => alert('Error al guardar: ' + error.message));
+        }
+    }
+}
+
+        // 9. Editar registro
+        function editarAfiliacion() {
+            const cedula = prompt("Ingrese la cédula del afiliado a editar (sin puntos):");
+            
+            if (cedula) {
+                afiliacionesRef.orderByChild('cedula').equalTo(cedula).once('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        const key = Object.keys(data)[0];
+                        const afiliado = data[key];
+                        
+                        document.getElementById('nombre').value = afiliado.nombre;
+                        document.getElementById('cedula').value = afiliado.cedula.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        document.getElementById('fecha').value = afiliado.fecha;
+                        document.getElementById('registro').value = afiliado.registro.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        document.getElementById('folio').value = afiliado.folio.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        document.getElementById('renglon').value = afiliado.renglon.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        document.getElementById('direccion').value = afiliado.direccion;
+                        
+                        editMode = true;
+                        currentAfiliacionId = key;
+                        alert('Modo edición activado para: ' + afiliado.nombre);
+                    } else {
+                        alert('No se encontró afiliado con esa cédula');
+                    }
+                });
+            }
+        }
+
+        // 10. Borrar registro
+        function borrarAfiliacion() {
+            const cedula = prompt("Ingrese la cédula del afiliado a borrar (sin puntos):");
+            
+            if (cedula) {
+                if (confirm('¿Está seguro de borrar este registro?')) {
+                    afiliacionesRef.orderByChild('cedula').equalTo(cedula).once('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            const key = Object.keys(data)[0];
+                            afiliacionesRef.child(key).remove()
+                                .then(() => {
+                                    alert('Registro borrado correctamente');
+                                    resetForm();
+                                    cargarUltimoRegistro();
+                                })
+                                .catch(error => alert('Error al borrar: ' + error.message));
+                        } else {
+                            alert('No se encontró afiliado con esa cédula');
+                        }
+                    });
+                }
+            }
+        }
+
+        // 11. Resetear formulario
+        function resetForm() {
+            document.getElementById('afiliacionForm').reset();
+            document.getElementById('fecha').valueAsDate = new Date();
+            editMode = false;
+            currentAfiliacionId = null;
+        }
+
+        // 12. Prevenir pegado de texto no válido
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('paste', (e) => e.preventDefault());
+        });
+    </script>
+</body>
+</html>

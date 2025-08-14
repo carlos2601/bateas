@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso - Junta de Acción Comunal</title>
+    <style>
+        :root {
+            --verde-primario: #4CAF50;
+            --verde-secundario: #388E3C;
+            --amarillo-primario: #FFC107;
+            --amarillo-secundario: #FFA000;
+            --gris-claro: #f5f5f5;
+            --gris-oscuro: #424242;
+            --blanco: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--verde-primario), var(--amarillo-primario));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background-color: var(--blanco);
+            width: 100%;
+            max-width: 420px;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+            }
+        }
+        
+        .organization-name {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--gris-oscuro);
+            font-weight: 700;
+            font-size: 1.2rem;
+            line-height: 1.4;
+        }
+        
+        .current-date {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #616161;
+            font-size: 0.9rem;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo i {
+            font-size: 3rem;
+            color: var(--verde-primario);
+            background: linear-gradient(to right, var(--verde-primario), var(--amarillo-primario));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo h1 {
+            margin-top: 0.8rem;
+            color: var(--gris-oscuro);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: var(--gris-claro);
+            color: var(--gris-oscuro);
+        }
+        
+        .input-group input:focus {
+            border-color: var(--verde-primario);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+            background-color: var(--blanco);
+        }
+        
+        .input-group label {
+            position: absolute;
+            left: 18px;
+            top: 14px;
+            color: #757575;
+            transition: all 0.3s;
+            pointer-events: none;
+            background-color: transparent;
+            padding: 0 5px;
+        }
+        
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: -10px;
+            left: 10px;
+            font-size: 0.8rem;
+            background-color: var(--blanco);
+            color: var(--verde-primario);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(to right, var(--verde-primario), var(--amarillo-primario));
+            color: var(--blanco);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+        
+        .btn:hover:not(:disabled) {
+            background: linear-gradient(to right, var(--verde-secundario), var(--amarillo-secundario));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: #bdbdbd;
+        }
+        
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #757575;
+        }
+        
+        .error-message {
+            color: #d32f2f;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+            background-color: #ffebee;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #d32f2f;
+        }
+        
+        .blocked-message {
+            color: #d32f2f;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+            background-color: #ffebee;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #d32f2f;
+        }
+        
+        .attempts-counter {
+            text-align: right;
+            font-size: 0.8rem;
+            color: #757575;
+            margin-top: -0.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #757575;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="login-container" id="loginForm">
+        <div class="organization-name">
+            JUNTA DE ACCIÓN COMUNAL<br>
+            BARRIO BATEAS SECTOR 3
+        </div>
+        
+        <div class="current-date" id="currentDate"></div>
+        
+        <div class="logo">
+            <i class="fas fa-shield-alt"></i>
+            <h1>Acceso Seguro</h1>
+        </div>
+        
+        <div class="error-message" id="errorMessage">
+            <i class="fas fa-exclamation-circle"></i> Credenciales incorrectas. Por favor intente nuevamente.
+        </div>
+        
+        <div class="blocked-message" id="blockedMessage">
+            <i class="fas fa-lock"></i> Sistema bloqueado temporalmente por seguridad. Intente nuevamente en <span id="countdown">3:00</span> minutos.
+        </div>
+        
+        <form id="loginFormElement">
+            <div class="input-group">
+                <input type="text" id="username" placeholder=" " required>
+                <label for="username">Usuario</label>
+            </div>
+            
+            <div class="input-group">
+                <div class="password-container">
+                    <input type="password" id="password" placeholder=" " required>
+                    <label for="password">Contraseña</label>
+                    <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                </div>
+            </div>
+            
+            <div class="attempts-counter" id="attemptsCounter">
+                Intentos restantes: <span id="remainingAttempts">3</span>
+            </div>
+            
+            <button type="submit" class="btn" id="loginBtn">Ingresar</button>
+        </form>
+        
+        <div class="footer">
+            <p>Sistema de acceso protegido © <span id="currentYear"></span></p>
+        </div>
+    </div>
+    
+    <script>
+        // Mostrar fecha actual y año
+        function updateDateTime() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date();
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('es-ES', options);
+            document.getElementById('currentYear').textContent = today.getFullYear();
+        }
+        
+        // Toggle para mostrar/ocultar contraseña
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this;
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        
+        // Variables para control de intentos
+        let failedAttempts = 0;
+        const maxAttempts = 3;
+        let isBlocked = false;
+        let blockTimeout;
+        
+        // Validar credenciales
+        document.getElementById('loginFormElement').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (isBlocked) return;
+            
+            // Credenciales válidas (deberías cambiarlas por las reales)
+            const validUsername = "4438681";
+            const validPassword = "4438681";
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if(username === validUsername && password === validPassword) {
+                // Redirigir a panelprincipal.html
+                window.location.href = "panelprincipal.html";
+            } else {
+                failedAttempts++;
+                const remainingAttempts = maxAttempts - failedAttempts;
+                document.getElementById('remainingAttempts').textContent = remainingAttempts;
+                
+                // Mostrar mensaje de error
+                document.getElementById('errorMessage').style.display = 'block';
+                
+                // Bloquear después de 3 intentos fallidos
+                if (failedAttempts >= maxAttempts) {
+                    blockSystem();
+                }
+            }
+        });
+        
+        // Función para bloquear el sistema
+        function blockSystem() {
+            isBlocked = true;
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('blockedMessage').style.display = 'block';
+            document.getElementById('loginBtn').disabled = true;
+            
+            let minutes = 3;
+            let seconds = 0;
+            
+            // Actualizar contador
+            const countdownElement = document.getElementById('countdown');
+            countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            const countdownInterval = setInterval(() => {
+                if (seconds === 0) {
+                    if (minutes === 0) {
+                        clearInterval(countdownInterval);
+                        unblockSystem();
+                        return;
+                    }
+                    minutes--;
+                    seconds = 59;
+                } else {
+                    seconds--;
+                }
+                
+                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+            
+            // Desbloquear después de 3 minutos
+            blockTimeout = setTimeout(() => {
+                clearInterval(countdownInterval);
+                unblockSystem();
+            }, 3 * 60 * 1000);
+        }
+        
+        // Función para desbloquear el sistema
+        function unblockSystem() {
+            isBlocked = false;
+            failedAttempts = 0;
+            document.getElementById('blockedMessage').style.display = 'none';
+            document.getElementById('loginBtn').disabled = false;
+            document.getElementById('remainingAttempts').textContent = maxAttempts;
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+        
+        // Inicializar
+        updateDateTime();
+    </script>
+</body>
+</html>
