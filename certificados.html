@@ -2,13 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Certificado de Afiliación</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <style>
     body {
       font-family: Tahoma, sans-serif;
@@ -19,6 +18,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      -webkit-text-size-adjust: 100%;
     }
 
     .formulario {
@@ -50,6 +50,7 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 14px;
+      width: 100%;
     }
 
     .botones-container {
@@ -59,6 +60,8 @@
       gap: 10px;
       margin: 20px auto;
       max-width: 800px;
+      width: 100%;
+      padding: 0 15px;
     }
 
     .botones-container button {
@@ -69,6 +72,7 @@
       cursor: pointer;
       color: white;
       min-width: 180px;
+      flex: 1;
     }
 
     #boton-descarga { background-color: #28a745; }
@@ -79,7 +83,7 @@
 
     #contenido-certificado {
       width: 210mm;
-      min-height: 260mm;
+      min-height: 297mm;
       margin: 20px auto;
       padding: 10mm 20mm;
       background-image: url('https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/logo.jpg');
@@ -90,6 +94,7 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
       box-sizing: border-box;
       position: relative;
+      aspect-ratio: 210 / 297;
     }
 
     .encabezado-certificado {
@@ -231,9 +236,90 @@
       margin-top: 5px;
       display: none;
     }
+
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: white;
+    }
+
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Media Queries para móviles */
+    @media screen and (max-width: 768px) {
+      #contenido-certificado {
+        width: 100% !important;
+        min-height: auto !important;
+        padding: 5mm !important;
+        background-size: contain !important;
+        zoom: 0.8;
+        transform-origin: top left;
+      }
+      
+      .formulario {
+        padding: 20px;
+        margin: 15px auto;
+      }
+      
+      .botones-container button {
+        min-width: 100%;
+      }
+      
+      .encabezado-certificado { font-size: 14px !important; }
+      .titulo-certificado { font-size: 15px !important; }
+      .datos-certificado { font-size: 13px !important; }
+      .texto-justificado { font-size: 8px !important; }
+    }
+
+    /* Estilos para impresión */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #contenido-certificado, #contenido-certificado * {
+        visibility: visible;
+      }
+      #contenido-certificado {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        padding: 10mm 20mm;
+        box-shadow: none;
+      }
+    }
   </style>
 </head>
 <body>
+
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Generando certificado...</p>
+  </div>
 
   <form id="formulario" class="formulario">
     <h2>Buscar documento</h2>
@@ -323,27 +409,34 @@
   </div>
 
 <script>
-  // Configuración Firebase
+  // Configuración Firebase (SOLO Database)
   const firebaseConfig = {
     apiKey: "AIzaSyCERQc8srBtLuMe6Jw944WsO1mySohMpkU",
     authDomain: "junta-bateas-sector-3.firebaseapp.com",
+    databaseURL: "https://junta-bateas-sector-3-default-rtdb.firebaseio.com",
     projectId: "junta-bateas-sector-3",
     storageBucket: "junta-bateas-sector-3.appspot.com",
     messagingSenderId: "913958453084",
     appId: "1:913958453084:web:5324de6958dfff01980b99"
   };
 
-  // Inicializar Firebase
+  // Inicializar Firebase (SOLO Database)
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
-  const storage = firebase.storage();
   const { jsPDF } = window.jspdf;
-
-  // Inicializar EmailJS
-  emailjs.init('TU_USER_ID_DE_EMAILJS'); // Reemplaza con tu User ID
 
   // Variables globales
   let personaEncontrada = null;
+
+  // Mostrar loader
+  function mostrarLoader() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+  }
+
+  // Ocultar loader
+  function ocultarLoader() {
+    document.getElementById('loading-overlay').style.display = 'none';
+  }
 
   // Función para formatear cédula
   function formatearCedula(cedula) {
@@ -359,7 +452,7 @@
     return date.toLocaleDateString('es-CO');
   }
 
-  // Cargar datos desde Firebase
+  // Cargar datos desde Firebase Database
   function cargarDatos() {
     return new Promise((resolve, reject) => {
       database.ref('afiliaciones').once('value')
@@ -410,11 +503,31 @@
     }
   });
 
-  // Capturar certificado (optimizado para PDF y PNG)
+  // Capturar certificado (optimizado para todos los dispositivos)
   async function capturarCertificado(formato = 'png') {
     const elemento = document.getElementById("contenido-certificado");
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Guardar estilos originales
+    const originalStyles = {
+      width: elemento.style.width,
+      height: elemento.style.height,
+      position: elemento.style.position,
+      left: elemento.style.left,
+      top: elemento.style.top
+    };
+    
+    // Fijar dimensiones absolutas para captura
+    elemento.style.width = '210mm';
+    elemento.style.height = '297mm';
+    elemento.style.position = 'absolute';
+    elemento.style.left = '0';
+    elemento.style.top = '0';
+    
     const options = {
-      scale: formato === 'pdf' ? 2 : 2, // Mayor escala para PDF
+      scale: isMobile ? 3 : 2,
+      width: 210 * 3.78, // Convertir mm a px (1mm ≈ 3.78px)
+      height: 297 * 3.78,
       logging: true,
       useCORS: true,
       allowTaint: true,
@@ -423,26 +536,41 @@
       scrollY: 0
     };
     
-    return await html2canvas(elemento, options);
+    try {
+      const canvas = await html2canvas(elemento, options);
+      return canvas;
+    } finally {
+      // Restaurar estilos originales
+      elemento.style.width = originalStyles.width;
+      elemento.style.height = originalStyles.height;
+      elemento.style.position = originalStyles.position;
+      elemento.style.left = originalStyles.left;
+      elemento.style.top = originalStyles.top;
+    }
   }
 
   // Descargar PNG (optimizado)
   document.getElementById("boton-descarga").addEventListener("click", async function() {
     try {
+      mostrarLoader();
       const canvas = await capturarCertificado('png');
-      // Reducir calidad para PNG (85% como balance)
       const link = document.createElement('a');
-      link.href = canvas.toDataURL('image/png', 0.85);
+      link.href = canvas.toDataURL('image/png', 0.9);
       link.download = `certificado_${personaEncontrada.cedula}.png`;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     } catch (error) {
-      alert("Error al generar la imagen");
+      alert("Error al generar la imagen: " + error.message);
+    } finally {
+      ocultarLoader();
     }
   });
 
   // Descargar PDF (optimizado)
   document.getElementById("boton-pdf").addEventListener("click", async function() {
     try {
+      mostrarLoader();
       const canvas = await capturarCertificado('pdf');
       const pdf = new jsPDF({
         orientation: 'portrait',
@@ -450,16 +578,16 @@
         format: 'a4'
       });
 
-      // Optimización para PDF
-      const imgData = canvas.toDataURL('image/jpeg', 0.85); // Usar JPEG para PDF con 85% calidad
-      const imgProps = pdf.getImageProperties(imgData);
+      const imgData = canvas.toDataURL('image/jpeg', 0.9);
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      
       pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`certificado_${personaEncontrada.cedula}.pdf`);
     } catch (error) {
-      alert("Error al generar el PDF");
+      alert("Error al generar el PDF: " + error.message);
+    } finally {
+      ocultarLoader();
     }
   });
 
@@ -481,7 +609,7 @@
     }
   });
 
-  // Enviar por WhatsApp (versión mejorada)
+  // Enviar por WhatsApp (versión simplificada)
   document.getElementById("boton-whatsapp").addEventListener("click", function() {
     document.getElementById("whatsapp-control").style.display = 'block';
   });
@@ -497,37 +625,34 @@
     }
     
     try {
-      alert("Preparando certificado para WhatsApp...");
+      mostrarLoader();
       const canvas = await capturarCertificado('png');
+      const imagenData = canvas.toDataURL('image/png', 0.9);
       
-      // 1. Subir a Firebase Storage
-      const blob = await new Promise(resolve => {
-        canvas.toBlob(resolve, 'image/png', 0.85); // 85% calidad
-      });
+      // Descargar la imagen primero
+      const link = document.createElement('a');
+      link.href = imagenData;
+      link.download = `certificado_${personaEncontrada.cedula}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       
-      const nombreArchivo = `certificados/${personaEncontrada.cedula}_${Date.now()}.png`;
-      const fileRef = storage.ref().child(nombreArchivo);
-      await fileRef.put(blob);
-      const urlDescarga = await fileRef.getDownloadURL();
-      
-      // 2. Formatear número y mensaje
+      // Abrir WhatsApp con el número
       const numeroWhatsApp = `57${numero.replace(/\D/g, '')}`;
-      const mensaje = `*Certificado de Afiliación* 🏛️\n\n` +
-                     `*Nombre:* ${personaEncontrada.nombre}\n` +
-                     `*Cédula:* ${formatearCedula(personaEncontrada.cedula)}\n\n` +
-                     `Descargar certificado: ${urlDescarga}\n\n` +
-                     `_Este enlace estará disponible por 24 horas_`;
+      window.open(`https://wa.me/${numeroWhatsApp}`, '_blank');
       
-      // 3. Abrir WhatsApp
-      window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`, '_blank');
+      // Mostrar instrucciones
+      alert("Por favor adjunte manualmente la imagen del certificado que se acaba de descargar.");
       
-      // 4. Limpiar y ocultar
+      // Limpiar y ocultar
       document.getElementById("whatsapp-control").style.display = 'none';
       numeroInput.value = '';
       
     } catch (error) {
       console.error("Error en WhatsApp:", error);
       alert("Ocurrió un error. Por favor intente nuevamente.");
+    } finally {
+      ocultarLoader();
     }
   });
 
@@ -548,7 +673,7 @@
     }
   });
 
-  // Enviar por Email
+  // Enviar por Email (versión simplificada)
   document.getElementById("boton-email").addEventListener("click", function() {
     document.getElementById("email-control").style.display = 'block';
   });
@@ -563,39 +688,34 @@
     }
     
     try {
-      alert("Generando y enviando certificado por email...");
+      mostrarLoader();
       const canvas = await capturarCertificado('pdf');
-      
-      // 1. Convertir a blob
-      const blob = await new Promise(resolve => {
-        canvas.toBlob(resolve, 'image/jpeg', 0.85); // 85% calidad para email
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
       });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.9);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
       
-      // 2. Subir a Firebase Storage temporalmente
-      const nombreArchivo = `certificados/${personaEncontrada.cedula}_${Date.now()}.jpg`;
-      const fileRef = storage.ref().child(nombreArchivo);
-      await fileRef.put(blob);
-      const urlDescarga = await fileRef.getDownloadURL();
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
       
-      // 3. Configurar parámetros para EmailJS
-      const templateParams = {
-        to_email: email,
-        nombre: personaEncontrada.nombre,
-        cedula: formatearCedula(personaEncontrada.cedula),
-        fecha: formatearFecha(new Date()),
-        enlace_certificado: urlDescarga
-      };
+      // Descargar el PDF
+      pdf.save(`certificado_${personaEncontrada.cedula}.pdf`);
       
-      // 4. Enviar email (configura SERVICE_ID y TEMPLATE_ID en EmailJS)
-      await emailjs.send('default_service', 'template_certificado', templateParams);
+      // Mostrar instrucciones
+      alert(`Se ha descargado el certificado. Por favor ábra su cliente de correo y envíelo manualmente a ${email} adjuntando el PDF descargado.`);
       
-      alert(`Certificado enviado exitosamente a ${email}`);
       document.getElementById("email-control").style.display = 'none';
       document.getElementById("email-destino").value = '';
       
     } catch (error) {
       console.error("Error al enviar email:", error);
-      alert("Ocurrió un error al enviar el correo. Por favor intente nuevamente.");
+      alert("Ocurrió un error al preparar el correo. Por favor intente nuevamente.");
+    } finally {
+      ocultarLoader();
     }
   });
 
