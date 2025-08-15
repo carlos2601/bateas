@@ -9,79 +9,236 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <style>
+    :root {
+      --verde-primario: #4CAF50;
+      --verde-secundario: #388E3C;
+      --amarillo-primario: #FFC107;
+      --amarillo-secundario: #FFA000;
+      --gris-claro: #f5f5f5;
+      --gris-oscuro: #424242;
+      --blanco: #ffffff;
+      --azul-oscuro: #1a3e72;
+      --azul-claro: #2a5ba7;
+      --rojo: #dc3545;
+      --naranja: #f39c12;
+      --verde-brillante: #0bdb1d;
+      --verde-whatsapp: #25D366;
+      --azul-email: #17a2b8;
+      --gris-boton: #6c757d;
+    }
+    
+    /* ESTILOS GENERALES PARA FORMULARIOS Y CONTROLES */
     body {
-      font-family: Tahoma, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      -webkit-text-size-adjust: 100%;
+      background: linear-gradient(135deg, var(--verde-primario), var(--amarillo-primario));
+      padding: 20px;
     }
-
-    .formulario {
+    
+    .header {
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 30px;
+      margin-bottom: 20px;
+      color: rgb(2, 82, 9);
+      font-weight: 800;
+      line-height: 1.4;
+    }
+    
+    .formulario, .formulario-edicion, .whatsapp-control, .email-control {
       background: white;
-      padding: 30px 40px;
-      border-radius: 12px;
+      padding: 20px;
+      border-radius: 8px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      margin: 30px auto 20px;
+      margin: 15px auto;
       text-align: center;
       max-width: 400px;
       width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
-    .formulario input[type="text"] {
-      width: 100%;
+    
+    .formulario input[type="text"], 
+    .formulario-edicion input,
+    #numero-whatsapp, 
+    #email-destino {
+      width: 94%;
       padding: 10px 12px;
       margin: 8px 0;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 14px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: normal;
     }
-
-    .formulario button {
-      background-color: #005baa;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      margin-top: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
+    
+    .formulario button, 
+    .formulario-edicion button,
+    #confirmar-whatsapp, 
+    #confirmar-email {
       width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(to right, var(--verde-primario), var(--amarillo-primario));
+      color: var(--blanco);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: all 0.3s;
     }
-
-    .botones-container {
+    
+    .formulario button:hover, 
+    .formulario-edicion button:hover,
+    #confirmar-whatsapp:hover, 
+    #confirmar-email:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    
+    .formulario-edicion label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+      text-align: left;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+    }
+    
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    /* ESTILOS PARA BOTONES DE OPCIONES */
+    .botones-principal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin: 20px auto;
+      width: 100%;
+      max-width: 800px;
+    }
+    
+    .botones-secundarios {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 10px;
-      margin: 20px auto;
-      max-width: 800px;
+      margin-top: 10px;
       width: 100%;
-      padding: 0 15px;
     }
-
+    
+    .botones-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin: 20px auto;
+      width: 100%;
+      max-width: 800px;
+    }
+    
     .botones-container button {
-      padding: 10px 15px;
+      padding: 12px 15px;
       border: none;
       border-radius: 6px;
       font-size: 14px;
       cursor: pointer;
       color: white;
       min-width: 180px;
-      flex: 1;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 900;
+      transition: all 0.3s;
     }
-
-    #boton-descarga { background-color: #28a745; }
-    #boton-pdf { background-color: #dc3545; }
-    #boton-whatsapp { background-color: #25D366; }
-    #boton-email { background-color: #17a2b8; }
-    #boton-volver { background-color: #6c757d; }
-
+    
+    .botones-container button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    
+    /* Colores modernos para los botones */
+    #boton-opciones { 
+      background-color: var(--azul-oscuro);
+      text-transform: uppercase;
+    }
+    
+    #boton-ocultar-opciones { 
+      background-color: var(--azul-claro);
+      text-transform: uppercase;
+    }
+    
+    #boton-editar { 
+      background-color: var(--verde-primario);
+      text-transform: uppercase;
+    }
+    
+    #boton-vista-previa { 
+      background-color: var(--naranja);
+      text-transform: uppercase;
+    }
+    
+    #boton-ocultar-vista { 
+      background-color: var(--naranja);
+      text-transform: uppercase;
+    }
+    
+    #boton-descarga { 
+      background-color: var(--verde-secundario);
+      text-transform: uppercase;
+    }
+    
+    #boton-pdf { 
+      background-color: var(--rojo);
+      text-transform: uppercase;
+    }
+    
+    #boton-whatsapp { 
+      background-color: var(--verde-whatsapp);
+      text-transform: uppercase;
+    }
+    
+    #boton-email { 
+      background-color: var(--azul-email);
+      text-transform: uppercase;
+    }
+    
+    #boton-volver { 
+      background-color: var(--gris-boton);
+      text-transform: uppercase;
+    }
+    
+    #boton-guardar { 
+      background-color: var(--verde-primario);
+      text-transform: uppercase;
+    }
+    
+    #boton-cancelar-edicion {
+      background-color: var(--rojo);
+      text-transform: uppercase;
+    }
+    
+    #boton-aplicar-cambios {
+      background-color: var(--naranja);
+      text-transform: uppercase;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    /* ESTILOS ESPECÍFICOS PARA EL CERTIFICADO (NO AFECTAN A LOS FORMULARIOS) */
     #contenido-certificado {
+      font-family: Tahoma, sans-serif;
       width: 210mm;
       min-height: 260mm;
       margin: 20px auto;
@@ -95,37 +252,42 @@
       box-sizing: border-box;
       position: relative;
       aspect-ratio: 210 / 297;
+      display: none;
     }
-
+    
     .encabezado-certificado {
       text-align: center;
       font-size: 17px;
       line-height: 1.4;
       margin-bottom: 20px;
       margin-top: 0;
+      font-family: Tahoma, sans-serif;
     }
-
+    
     .texto-justificado {
       text-align: justify;
       font-size: 9px;
       line-height: 1.5;
       margin: 0px 0;
+      font-family: Tahoma, sans-serif;
     }
-
+    
     .titulo-certificado {
       text-align: center;
       font-size: 18px;
       line-height: 1.5;
       margin: 30px 0;
+      font-family: Tahoma, sans-serif;
     }
-
+    
     .datos-certificado {
       text-align: left;
       font-size: 16px;
       line-height: 1.6;
       margin: 20px 0;
+      font-family: Tahoma, sans-serif;
     }
-
+    
     .firma-fondo {
       width: 270px;
       position: absolute;
@@ -140,7 +302,7 @@
       bottom: 55mm;
       right: 20mm;
     }
-
+    
     .sello2-fondo {
       width: 180px;
       position: absolute;
@@ -148,95 +310,17 @@
       left: 50%;
       transform: translateX(-50%);
     }
-
+    
     .pie-certificado {
       position: absolute;
       bottom: 20mm;
       width: calc(100% - 40mm);
       text-align: center;
       font-size: 12px;
-    }
-
-    #cedula {
-      background-color: #e3f2fd;
-      font-weight: bold;
-      border: 2px solid #2196f3;
-    }
-
-    .whatsapp-control, .email-control {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin: 15px auto;
-      display: none;
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-      position: relative;
+      font-family: Tahoma, sans-serif;
     }
     
-    .whatsapp-control .cerrar, .email-control .cerrar {
-      position: absolute;
-      top: 5px;
-      right: 10px;
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #666;
-    }
-    
-    #numero-whatsapp, #email-destino {
-      width: 90%;
-      padding: 10px 12px;
-      margin: 8px 0;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-    
-    #numero-whatsapp {
-      border: 2px solid #25D366;
-      background-color: #f0fff4;
-    }
-    
-    #email-destino {
-      border: 2px solid #17a2b8;
-      background-color: #f0f8ff;
-    }
-    
-    #confirmar-whatsapp, #confirmar-email {
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      margin-top: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      width: 100%;
-    }
-    
-    #confirmar-whatsapp {
-      background-color: #25D366;
-    }
-    
-    #confirmar-email {
-      background-color: #17a2b8;
-    }
-    
-    .whatsapp-info, .email-info {
-      font-size: 12px;
-      color: #666;
-      margin-top: 5px;
-    }
-    
-    .error-message {
-      color: #dc3545;
-      font-size: 12px;
-      margin-top: 5px;
-      display: none;
-    }
-
+    /* ESTILOS ADICIONALES */
     .loading-overlay {
       display: none;
       position: fixed;
@@ -251,7 +335,7 @@
       flex-direction: column;
       color: white;
     }
-
+    
     .spinner {
       border: 5px solid #f3f3f3;
       border-top: 5px solid #3498db;
@@ -261,12 +345,12 @@
       animation: spin 1s linear infinite;
       margin-bottom: 15px;
     }
-
+    
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
+    
     /* Media Queries para móviles */
     @media screen and (max-width: 768px) {
       #contenido-certificado {
@@ -274,25 +358,23 @@
         min-height: auto !important;
         padding: 5mm !important;
         background-size: contain !important;
-        zoom: 0.8;
-        transform-origin: top left;
       }
       
-      .formulario {
-        padding: 20px;
-        margin: 15px auto;
+      .formulario, .formulario-edicion {
+        padding: 15px;
+      }
+      
+      .botones-secundarios {
+        flex-direction: column;
+        align-items: center;
       }
       
       .botones-container button {
-        min-width: 100%;
+        width: 100%;
+        max-width: 250px;
       }
-      
-      .encabezado-certificado { font-size: 14px !important; }
-      .titulo-certificado { font-size: 15px !important; }
-      .datos-certificado { font-size: 13px !important; }
-      .texto-justificado { font-size: 8px !important; }
     }
-
+    
     /* Estilos para impresión */
     @media print {
       body * {
@@ -316,6 +398,11 @@
 </head>
 <body>
 
+  <div class="header">
+    JUNTA DE ACCIÓN COMUNAL<br>
+    BARRIO BATEAS SECTOR 3
+  </div>
+
   <div class="loading-overlay" id="loading-overlay">
     <div class="spinner"></div>
     <p>Generando certificado...</p>
@@ -324,26 +411,59 @@
   <form id="formulario" class="formulario">
     <h2>Buscar documento</h2>
     <input type="text" id="cedula" placeholder="Número de cédula o Nombre" required />
-    <input type="text" id="nombre-editable" placeholder="Nombre completo" style="display:none;" />
-    <input type="text" id="cedula-editable" placeholder="Cédula" style="display:none;" />
-    <input type="text" id="fecha-editable" placeholder="Fecha de afiliación" style="display:none;" />
-    <input type="text" id="registro-editable" placeholder="Registro Nº" style="display:none;" />
-    <input type="text" id="folio-editable" placeholder="Folio Nº" style="display:none;" />
-    <input type="text" id="renglon-editable" placeholder="Renglón Nº" style="display:none;" />
-    <input type="text" id="direccion-editable" placeholder="Dirección" style="display:none;" />
     <button type="submit">Consultar</button>
   </form>
 
-  <div class="botones-container">
-    <button id="boton-descarga" style="display:none;">Descargar Imagen (PNG)</button>
-    <button id="boton-pdf" style="display:none;">Descargar PDF</button>
-    <button id="boton-whatsapp" style="display:none;">Enviar por WhatsApp</button>
-    <button id="boton-email" style="display:none;">Enviar por Email</button>
-    <button id="boton-volver" onclick="window.location.href='panelprincipal.html'">Volver al Panel</button>
+  <div id="formulario-edicion" class="formulario-edicion hidden">
+    <h3>Editar Datos del Certificado</h3>
+    <label for="editar-nombre">Nombre:</label>
+    <input type="text" id="editar-nombre">
+    
+    <label for="editar-cedula">Cédula:</label>
+    <input type="text" id="editar-cedula">
+    
+    <label for="editar-fecha">Fecha de Afiliación:</label>
+    <input type="text" id="editar-fecha">
+    
+    <label for="editar-registro">Registro Nº:</label>
+    <input type="text" id="editar-registro">
+    
+    <label for="editar-folio">Folio Nº:</label>
+    <input type="text" id="editar-folio">
+    
+    <label for="editar-renglon">Renglón Nº:</label>
+    <input type="text" id="editar-renglon">
+    
+    <label for="editar-direccion">Dirección:</label>
+    <input type="text" id="editar-direccion">
+    
+    <div class="button-group">
+      <button id="boton-guardar">Guardar Cambios</button>
+      <button id="boton-aplicar-cambios" class="hidden">Aplicar Cambios</button>
+      <button id="boton-cancelar-edicion">Cancelar</button>
+    </div>
   </div>
 
-  <div class="whatsapp-control" id="whatsapp-control">
-    <button class="cerrar" onclick="document.getElementById('whatsapp-control').style.display='none'">×</button>
+  <div class="botones-principal">
+    <button id="boton-opciones">Opciones</button>
+    <button id="boton-ocultar-opciones" class="hidden">Ocultar Opciones</button>
+    
+    <div id="grupo-botones" class="hidden">
+      <div class="botones-secundarios">
+        <button id="boton-editar">Editar Certificado</button>
+        <button id="boton-vista-previa">Mostrar Vista Previa</button>
+        <button id="boton-ocultar-vista" class="hidden">Ocultar Vista Previa</button>
+        <button id="boton-descarga">Descargar Imagen (PNG)</button>
+        <button id="boton-pdf">Descargar PDF</button>
+        <button id="boton-whatsapp">Enviar por WhatsApp</button>
+        <button id="boton-email">Enviar por Email</button>
+        <button id="boton-volver">Volver al Panel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="whatsapp-control hidden" id="whatsapp-control">
+    <button class="cerrar" onclick="document.getElementById('whatsapp-control').classList.add('hidden')">×</button>
     <h3>Enviar por WhatsApp</h3>
     <input type="text" id="numero-whatsapp" placeholder="Número de celular (10 dígitos)" maxlength="10" />
     <div class="error-message" id="whatsapp-error">Ingrese un número válido de 10 dígitos</div>
@@ -351,15 +471,15 @@
     <button id="confirmar-whatsapp">Enviar Certificado</button>
   </div>
 
-  <div class="email-control" id="email-control">
-    <button class="cerrar" onclick="document.getElementById('email-control').style.display='none'">×</button>
+  <div class="email-control hidden" id="email-control">
+    <button class="cerrar" onclick="document.getElementById('email-control').classList.add('hidden')">×</button>
     <h3>Enviar por Correo Electrónico</h3>
     <input type="email" id="email-destino" placeholder="Correo electrónico del destinatario" required />
     <div class="error-message" id="email-error">Ingrese un correo electrónico válido</div>
     <button id="confirmar-email">Enviar Certificado</button>
   </div>
 
-  <div id="contenido-certificado" style="display:none;">
+  <div id="contenido-certificado">
     <div class="encabezado-certificado">
       <br>
       <strong>REPUBLICA DE COLOMBIA</strong><br>
@@ -427,6 +547,7 @@
 
   // Variables globales
   let personaEncontrada = null;
+  let datosOriginales = null;
 
   // Mostrar loader
   function mostrarLoader() {
@@ -475,11 +596,21 @@
     document.getElementById("direccion-cert").textContent = persona.direccion;
     document.getElementById("fecha-emision").textContent = formatearFecha(new Date());
     
-    document.getElementById("contenido-certificado").style.display = 'block';
-    document.getElementById("boton-descarga").style.display = 'block';
-    document.getElementById("boton-pdf").style.display = 'block';
-    document.getElementById("boton-whatsapp").style.display = 'block';
-    document.getElementById("boton-email").style.display = 'block';
+    // Guardar datos originales para posible edición
+    datosOriginales = {...persona};
+    
+    // Mostrar formulario de edición con los datos
+    document.getElementById("editar-nombre").value = persona.nombre;
+    document.getElementById("editar-cedula").value = persona.cedula;
+    document.getElementById("editar-fecha").value = persona.fecha;
+    document.getElementById("editar-registro").value = persona.registro;
+    document.getElementById("editar-folio").value = persona.folio;
+    document.getElementById("editar-renglon").value = persona.renglon;
+    document.getElementById("editar-direccion").value = persona.direccion;
+    
+    // Mostrar botones de opciones
+    document.getElementById("boton-opciones").classList.remove('hidden');
+    document.getElementById("contenido-certificado").style.display = 'none';
   }
 
   // Buscar persona
@@ -503,7 +634,75 @@
     }
   });
 
-  // Capturar certificado (optimizado para todos los dispositivos)
+  // Mostrar/ocultar opciones
+  document.getElementById("boton-opciones").addEventListener("click", function() {
+    this.classList.add('hidden');
+    document.getElementById("boton-ocultar-opciones").classList.remove('hidden');
+    document.getElementById("grupo-botones").classList.remove('hidden');
+  });
+
+  document.getElementById("boton-ocultar-opciones").addEventListener("click", function() {
+    this.classList.add('hidden');
+    document.getElementById("boton-opciones").classList.remove('hidden');
+    document.getElementById("grupo-botones").classList.add('hidden');
+  });
+
+  // Mostrar/ocultar vista previa
+  document.getElementById("boton-vista-previa").addEventListener("click", function() {
+    document.getElementById("contenido-certificado").style.display = 'block';
+    this.classList.add('hidden');
+    document.getElementById("boton-ocultar-vista").classList.remove('hidden');
+  });
+
+  document.getElementById("boton-ocultar-vista").addEventListener("click", function() {
+    document.getElementById("contenido-certificado").style.display = 'none';
+    this.classList.add('hidden');
+    document.getElementById("boton-vista-previa").classList.remove('hidden');
+  });
+
+  // Editar certificado
+  document.getElementById("boton-editar").addEventListener("click", function() {
+    document.getElementById("formulario-edicion").classList.remove('hidden');
+    document.getElementById("boton-guardar").classList.remove('hidden');
+    document.getElementById("boton-aplicar-cambios").classList.add('hidden');
+  });
+
+  document.getElementById("boton-cancelar-edicion").addEventListener("click", function() {
+    document.getElementById("formulario-edicion").classList.add('hidden');
+    // Restaurar datos originales
+    if (datosOriginales) {
+      mostrarCertificado(datosOriginales);
+    }
+  });
+
+  // Guardar cambios
+  document.getElementById("boton-guardar").addEventListener("click", function() {
+    // Cambiar a botón "Aplicar Cambios"
+    document.getElementById("boton-guardar").classList.add('hidden');
+    document.getElementById("boton-aplicar-cambios").classList.remove('hidden');
+  });
+
+  // Aplicar cambios
+  document.getElementById("boton-aplicar-cambios").addEventListener("click", function() {
+    // Actualizar los datos con los valores editados
+    personaEncontrada.nombre = document.getElementById("editar-nombre").value;
+    personaEncontrada.cedula = document.getElementById("editar-cedula").value;
+    personaEncontrada.fecha = document.getElementById("editar-fecha").value;
+    personaEncontrada.registro = document.getElementById("editar-registro").value;
+    personaEncontrada.folio = document.getElementById("editar-folio").value;
+    personaEncontrada.renglon = document.getElementById("editar-renglon").value;
+    personaEncontrada.direccion = document.getElementById("editar-direccion").value;
+    
+    // Actualizar la vista previa
+    mostrarCertificado(personaEncontrada);
+    
+    // Ocultar formulario de edición
+    document.getElementById("formulario-edicion").classList.add('hidden');
+    
+    alert("Cambios aplicados correctamente");
+  });
+
+  // Capturar certificado
   async function capturarCertificado(formato = 'png') {
     const elemento = document.getElementById("contenido-certificado");
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -526,7 +725,7 @@
     
     const options = {
       scale: isMobile ? 3 : 2,
-      width: 210 * 3.78, // Convertir mm a px (1mm ≈ 3.78px)
+      width: 210 * 3.78,
       height: 297 * 3.78,
       logging: true,
       useCORS: true,
@@ -549,7 +748,7 @@
     }
   }
 
-  // Descargar PNG (optimizado)
+  // Descargar PNG
   document.getElementById("boton-descarga").addEventListener("click", async function() {
     try {
       mostrarLoader();
@@ -567,7 +766,7 @@
     }
   });
 
-  // Descargar PDF (optimizado)
+  // Descargar PDF
   document.getElementById("boton-pdf").addEventListener("click", async function() {
     try {
       mostrarLoader();
@@ -609,9 +808,9 @@
     }
   });
 
-  // Enviar por WhatsApp (versión simplificada)
+  // Enviar por WhatsApp
   document.getElementById("boton-whatsapp").addEventListener("click", function() {
-    document.getElementById("whatsapp-control").style.display = 'block';
+    document.getElementById("whatsapp-control").classList.remove('hidden');
   });
 
   document.getElementById("confirmar-whatsapp").addEventListener("click", async function() {
@@ -645,7 +844,7 @@
       alert("Por favor adjunte manualmente la imagen del certificado que se acaba de descargar.");
       
       // Limpiar y ocultar
-      document.getElementById("whatsapp-control").style.display = 'none';
+      document.getElementById("whatsapp-control").classList.add('hidden');
       numeroInput.value = '';
       
     } catch (error) {
@@ -673,9 +872,9 @@
     }
   });
 
-  // Enviar por Email (versión simplificada)
+  // Enviar por Email
   document.getElementById("boton-email").addEventListener("click", function() {
-    document.getElementById("email-control").style.display = 'block';
+    document.getElementById("email-control").classList.remove('hidden');
   });
 
   document.getElementById("confirmar-email").addEventListener("click", async function() {
@@ -708,7 +907,7 @@
       // Mostrar instrucciones
       alert(`Se ha descargado el certificado. Por favor ábra su cliente de correo y envíelo manualmente a ${email} adjuntando el PDF descargado.`);
       
-      document.getElementById("email-control").style.display = 'none';
+      document.getElementById("email-control").classList.add('hidden');
       document.getElementById("email-destino").value = '';
       
     } catch (error) {
@@ -718,18 +917,6 @@
       ocultarLoader();
     }
   });
-
-  // Edición de campos
-  ["nombre", "cedula", "fecha", "registro", "folio", "renglon", "direccion"].forEach(id => {
-    const editable = document.getElementById(`${id}-editable`);
-    if (editable) {
-      editable.addEventListener("input", function() {
-        const campo = document.getElementById(`${id}-cert`);
-        if (campo) campo.textContent = this.value;
-      });
-    }
-  });
 </script>
 </body>
 </html>
-
