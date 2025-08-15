@@ -682,6 +682,12 @@
     document.getElementById("grupo-botones").classList.add('hidden');
   });
 
+  document.getElementById('boton-volver').addEventListener('click', () => {
+            if (confirm('¿Volver al menú principal?')) {
+                window.location.href = 'panelprincipal.html';
+            }
+        });
+
   // Mostrar vista previa como imagen estática
   document.getElementById("boton-vista-previa").addEventListener("click", async function() {
     try {
