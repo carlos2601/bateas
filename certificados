@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Certificado de Afiliación</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <style>
+    :root {
+      --verde-primario: #4CAF50;
+      --verde-secundario: #388E3C;
+      --amarillo-primario: #FFC107;
+      --amarillo-secundario: #FFA000;
+      --gris-claro: #f5f5f5;
+      --gris-oscuro: #424242;
+      --blanco: #ffffff;
+      --azul-oscuro: #1a3e72;
+      --azul-claro: #2a5ba7;
+      --rojo: #dc3545;
+      --naranja: #f39c12;
+      --verde-brillante: #0bdb1d;
+      --verde-whatsapp: #25D366;
+      --azul-email: #17a2b8;
+      --gris-boton: #6c757d;
+    }
+    
+    /* ESTILOS GENERALES PARA FORMULARIOS Y CONTROLES */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(135deg, var(--verde-primario), var(--amarillo-primario));
+      padding: 20px;
+    }
+    
+    .header {
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 30px;
+      margin-bottom: 20px;
+      color: rgb(2, 82, 9);
+      font-weight: 800;
+      line-height: 1.4;
+    }
+    
+    .formulario, .formulario-edicion, .whatsapp-control, .email-control {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin: 15px auto;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .formulario input[type="text"], 
+    .formulario-edicion input,
+    #numero-whatsapp, 
+    #email-destino {
+      width: 94%;
+      padding: 10px 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: normal;
+    }
+    
+    .formulario button, 
+    .formulario-edicion button,
+    #confirmar-whatsapp, 
+    #confirmar-email {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(to right, var(--verde-primario), var(--amarillo-primario));
+      color: var(--blanco);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: all 0.3s;
+    }
+    
+    .formulario button:hover, 
+    .formulario-edicion button:hover,
+    #confirmar-whatsapp:hover, 
+    #confirmar-email:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    
+    .formulario-edicion label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+      text-align: left;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+    }
+    
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    /* ESTILOS PARA BOTONES DE OPCIONES */
+    .botones-principal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin: 20px auto;
+      width: 100%;
+      max-width: 800px;
+    }
+    
+    .botones-secundarios {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+      width: 100%;
+    }
+    
+    .botones-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin: 20px auto;
+      width: 100%;
+      max-width: 800px;
+    }
+    
+    .botones-container button {
+      padding: 12px 15px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      color: white;
+      min-width: 180px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 900;
+      transition: all 0.3s;
+    }
+    
+    .botones-container button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    
+    /* Colores modernos para los botones */
+    #boton-opciones { 
+      background-color: var(--azul-oscuro);
+      text-transform: uppercase;
+    }
+    
+    #boton-ocultar-opciones { 
+      background-color: var(--azul-claro);
+      text-transform: uppercase;
+    }
+    
+    #boton-editar { 
+      background-color: var(--verde-primario);
+      text-transform: uppercase;
+    }
+    
+    #boton-vista-previa { 
+      background-color: var(--naranja);
+      text-transform: uppercase;
+    }
+    
+    #boton-ocultar-vista { 
+      background-color: var(--naranja);
+      text-transform: uppercase;
+    }
+    
+    #boton-descarga { 
+      background-color: var(--verde-secundario);
+      text-transform: uppercase;
+    }
+    
+    #boton-pdf { 
+      background-color: var(--rojo);
+      text-transform: uppercase;
+    }
+    
+    #boton-whatsapp { 
+      background-color: var(--verde-whatsapp);
+      text-transform: uppercase;
+    }
+    
+    #boton-email { 
+      background-color: var(--azul-email);
+      text-transform: uppercase;
+    }
+    
+    #boton-volver { 
+      background-color: var(--gris-boton);
+      text-transform: uppercase;
+    }
+    
+    #boton-guardar { 
+      background-color: var(--verde-primario);
+      text-transform: uppercase;
+    }
+    
+    #boton-cancelar-edicion {
+      background-color: var(--rojo);
+      text-transform: uppercase;
+    }
+    
+    #boton-aplicar-cambios {
+      background-color: var(--naranja);
+      text-transform: uppercase;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    /* ESTILOS ESPECÍFICOS PARA EL CERTIFICADO (NO AFECTAN A LOS FORMULARIOS) */
+    #contenido-certificado {
+      font-family: Tahoma, sans-serif;
+      width: 210mm;
+      min-height: 260mm;
+      margin: 20px auto;
+      padding: 10mm 20mm;
+      background-image: url('https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/logo.jpg');
+      background-position: center 20%;
+      background-repeat: no-repeat;
+      background-size: 90%;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      box-sizing: border-box;
+      position: relative;
+      aspect-ratio: 210 / 297;
+      display: none;
+      overflow: hidden;
+    }
+    
+    /* Contenedor para la imagen del certificado */
+    #certificado-imagen-container {
+      display: none;
+      max-width: 100%;
+      margin: 20px auto;
+      text-align: center;
+    }
+    
+    #certificado-imagen {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    
+    .encabezado-certificado {
+      text-align: center;
+      font-size: 17px;
+      line-height: 1.4;
+      margin-bottom: 20px;
+      margin-top: 0;
+      font-family: Tahoma, sans-serif;
+    }
+    
+    .texto-justificado {
+      text-align: justify;
+      font-size: 9px;
+      line-height: 1.5;
+      margin: 0px 0;
+      font-family: Tahoma, sans-serif;
+    }
+    
+    .titulo-certificado {
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.5;
+      margin: 30px 0;
+      font-family: Tahoma, sans-serif;
+    }
+    
+    .datos-certificado {
+      text-align: left;
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 20px 0;
+      font-family: Tahoma, sans-serif;
+    }
+    
+    .firma-fondo {
+      width: 270px;
+      position: absolute;
+      bottom: 25mm;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .sello-derecha {
+      width: 140px;
+      position: absolute;
+      bottom: 55mm;
+      right: 20mm;
+    }
+    
+    .sello2-fondo {
+      width: 180px;
+      position: absolute;
+      bottom: 45mm;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .pie-certificado {
+      position: absolute;
+      bottom: 20mm;
+      width: calc(100% - 40mm);
+      text-align: center;
+      font-size: 12px;
+      font-family: Tahoma, sans-serif;
+    }
+    
+    /* ESTILOS ADICIONALES */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: white;
+    }
+    
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Media Queries para móviles */
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      
+      .header {
+        font-size: 24px;
+      }
+      
+      #contenido-certificado {
+        width: 100% !important;
+        min-height: auto !important;
+        padding: 5mm !important;
+        background-size: contain !important;
+      }
+      
+      .formulario, .formulario-edicion {
+        padding: 15px;
+      }
+      
+      .botones-secundarios {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .botones-container button {
+        width: 100%;
+        max-width: 250px;
+      }
+      
+      #certificado-imagen {
+        width: 100%;
+      }
+    }
+    
+    /* Estilos para impresión */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #contenido-certificado, #contenido-certificado * {
+        visibility: visible;
+      }
+      #contenido-certificado {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        padding: 10mm 20mm;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    JUNTA DE ACCIÓN COMUNAL<br>
+    BARRIO BATEAS SECTOR 3
+  </div>
+
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Generando certificado...</p>
+  </div>
+
+  <form id="formulario" class="formulario">
+    <h2>Buscar documento</h2>
+    <input type="text" id="cedula" placeholder="Número de cédula o Nombre" required />
+    <button type="submit">Consultar</button>
+  </form>
+
+  <div id="formulario-edicion" class="formulario-edicion hidden">
+    <h3>Editar Datos del Certificado</h3>
+    <label for="editar-nombre">Nombre:</label>
+    <input type="text" id="editar-nombre">
+    
+    <label for="editar-cedula">Cédula:</label>
+    <input type="text" id="editar-cedula">
+    
+    <label for="editar-fecha">Fecha de Afiliación:</label>
+    <input type="text" id="editar-fecha">
+    
+    <label for="editar-registro">Registro Nº:</label>
+    <input type="text" id="editar-registro">
+    
+    <label for="editar-folio">Folio Nº:</label>
+    <input type="text" id="editar-folio">
+    
+    <label for="editar-renglon">Renglón Nº:</label>
+    <input type="text" id="editar-renglon">
+    
+    <label for="editar-direccion">Dirección:</label>
+    <input type="text" id="editar-direccion">
+    
+    <div class="button-group">
+      <button id="boton-guardar">Guardar Cambios</button>
+      <button id="boton-aplicar-cambios" class="hidden">Aplicar Cambios</button>
+      <button id="boton-cancelar-edicion">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="botones-principal">
+    <button id="boton-opciones">Opciones</button>
+    <button id="boton-ocultar-opciones" class="hidden">Ocultar Opciones</button>
+    
+    <div id="grupo-botones" class="hidden">
+      <div class="botones-secundarios">
+        <button id="boton-editar">Editar Certificado</button>
+        <button id="boton-vista-previa">Mostrar Vista Previa</button>
+        <button id="boton-ocultar-vista" class="hidden">Ocultar Vista Previa</button>
+        <button id="boton-descarga">Descargar Imagen (PNG)</button>
+        <button id="boton-pdf">Descargar PDF</button>
+        <button id="boton-whatsapp">Enviar por WhatsApp</button>
+        <button id="boton-email">Enviar por Email</button>
+        <button id="boton-volver">Volver al Panel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="whatsapp-control hidden" id="whatsapp-control">
+    <button class="cerrar" onclick="document.getElementById('whatsapp-control').classList.add('hidden')">×</button>
+    <h3>Enviar por WhatsApp</h3>
+    <input type="text" id="numero-whatsapp" placeholder="Número de celular (10 dígitos)" maxlength="10" />
+    <div class="error-message" id="whatsapp-error">Ingrese un número válido de 10 dígitos</div>
+    <div class="whatsapp-info">Solo números colombianos. Ejemplo: 3123456789</div>
+    <button id="confirmar-whatsapp">Enviar Certificado</button>
+  </div>
+
+  <div class="email-control hidden" id="email-control">
+    <button class="cerrar" onclick="document.getElementById('email-control').classList.add('hidden')">×</button>
+    <h3>Enviar por Correo Electrónico</h3>
+    <input type="email" id="email-destino" placeholder="Correo electrónico del destinatario" required />
+    <div class="error-message" id="email-error">Ingrese un correo electrónico válido</div>
+    <button id="confirmar-email">Enviar Certificado</button>
+  </div>
+
+  <!-- Contenedor original del certificado (oculto) -->
+  <div id="contenido-certificado">
+    <div class="encabezado-certificado">
+      <br>
+      <strong>REPUBLICA DE COLOMBIA</strong><br>
+      <strong>DEPARTAMENTO DEL META</strong><br>
+      <strong>PUERTO GAITÁN – META</strong><br>
+      <strong>JUNTA DE ACCIÓN COMUNAL</strong><br>
+      <strong>ASENTAMIENTO HUMANO BATEAS</strong><br>
+      Personería Jurídica No. 101 del 20 de noviembre de 2.012.
+    </div>
+    <div class="texto-justificado">
+      El suscrito presidente del asentamiento humano Bateas, del Municipio de Puerto Gaitán Meta, fundamentado en la ley 1551 del 2012 que modifica el artículo 91 de la ley 136 de 1994, el cual reza en su artículo 91: Funciones. Los Alcaldes ejercerán…y además de estas, en el literal F numeral 6. Con relación a la prosperidad integral de su región; Expedirá la certificación para acreditar la residencia a aquellas personas que residen  en el territorio del área de influencia de los proyectos de exploración y explotación petrolera y minería en general, y que aspiren acceder a labores como mano de  obra no calificada y calificada, Los alcaldes expedirán dichos certificados con base en LOS REGISTROS ELECTORALES O DE SISBEN , ASI COMO LOS REGISTROS DE LOS AFILIADOS DE LAS JUNTAS DE ACCIÓN COMUNAL
+    </div>
+
+    <div class="titulo-certificado">
+      <span style="font-size:18px;">CONSTANCIA DE AFILIACIÓN</span><br>
+      <strong>La Junta de Acción Comunal del Barrio Bateas</strong><br>
+      HACE CONSTAR:<br>
+      Que la información suministrada reposa en el libro de afiliados:
+    </div>
+
+    <div class="datos-certificado">
+      NOMBRE: <strong id="nombre-cert"></strong><br>
+      CÉDULA: <strong id="cedula-cert"></strong><br>
+      FECHA DE AFILIACIÓN: <strong id="fecha-cert"></strong><br>
+      REGISTRO Nº: <strong id="registro-cert"></strong><br>
+      FOLIO Nº: <strong id="folio-cert"></strong><br>
+      RENGLÓN Nº: <strong id="renglon-cert"></strong><br>
+      DIRECCIÓN: <strong id="direccion-cert"></strong><br><br>
+      La presente constancia se expide a solicitud del interesado, <strong id="fecha-emision"></strong> y tiene vigencia de 6 meses a partir de la fecha de su expedición.
+    </div>
+    <br>Atentamente,<br><br><br><br>
+
+    <img src="https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/sello.png" class="sello-derecha" alt="Sello">
+    <img src="https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/firma.png" class="firma-fondo" alt="Firma">
+    <img src="https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/sello2.png" class="sello2-fondo" alt="Sello">
+
+    <div style="text-align:center;margin-top:30px;">
+      __________________________<br>
+      <strong>JUAN CARLOS USECHE B</strong><br>
+      Presidente<br>
+      jacbateasgaitan@gmail.com
+    </div>
+    <br><br>
+    <div style="text-align:justify;font-size:12px;line-height:1.3;margin-top:25px;"><br><br>
+      Código penal colombiano. "ley 599 de 2000 art. 287.falsedad material en documento público, el que falsifique documentos públicos que pueda servir de prueba, incurrirá en prisión de 3 a 6 años". 
+    </div>
+  </div>
+
+  <!-- Contenedor para la imagen del certificado (vista previa) -->
+  <div id="certificado-imagen-container" class="hidden">
+    <img id="certificado-imagen" src="" alt="Vista previa del certificado">
+  </div>
+
+<script>
+  // Configuración Firebase (SOLO Database)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCERQc8srBtLuMe6Jw944WsO1mySohMpkU",
+    authDomain: "junta-bateas-sector-3.firebaseapp.com",
+    databaseURL: "https://junta-bateas-sector-3-default-rtdb.firebaseio.com",
+    projectId: "junta-bateas-sector-3",
+    storageBucket: "junta-bateas-sector-3.appspot.com",
+    messagingSenderId: "913958453084",
+    appId: "1:913958453084:web:5324de6958dfff01980b99"
+  };
+
+  // Inicializar Firebase (SOLO Database)
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+  const { jsPDF } = window.jspdf;
+
+  // Variables globales
+  let personaEncontrada = null;
+  let datosOriginales = null;
+  let certificadoCanvas = null;
+
+  // Mostrar loader
+  function mostrarLoader() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+  }
+
+  // Ocultar loader
+  function ocultarLoader() {
+    document.getElementById('loading-overlay').style.display = 'none';
+  }
+
+  // Función para formatear cédula
+  function formatearCedula(cedula) {
+    if (!cedula) return '';
+    return cedula.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  // Función para formatear fecha
+  function formatearFecha(fecha) {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    if (isNaN(date)) return fecha;
+    return date.toLocaleDateString('es-CO');
+  }
+
+  // Cargar datos desde Firebase Database
+  function cargarDatos() {
+    return new Promise((resolve, reject) => {
+      database.ref('afiliaciones').once('value')
+        .then((snapshot) => {
+          const data = snapshot.val();
+          resolve(data ? Object.values(data) : []);
+        })
+        .catch(reject);
+    });
+  }
+
+  // Mostrar certificado
+  function mostrarCertificado(persona) {
+    document.getElementById("nombre-cert").textContent = persona.nombre;
+    document.getElementById("cedula-cert").textContent = formatearCedula(persona.cedula);
+    document.getElementById("fecha-cert").textContent = formatearFecha(persona.fecha);
+    document.getElementById("registro-cert").textContent = formatearCedula(persona.registro);
+    document.getElementById("folio-cert").textContent = persona.folio;
+    document.getElementById("renglon-cert").textContent = persona.renglon;
+    document.getElementById("direccion-cert").textContent = persona.direccion;
+    document.getElementById("fecha-emision").textContent = formatearFecha(new Date());
+    
+    // Guardar datos originales para posible edición
+    datosOriginales = {...persona};
+    
+    // Mostrar formulario de edición con los datos
+    document.getElementById("editar-nombre").value = persona.nombre;
+    document.getElementById("editar-cedula").value = persona.cedula;
+    document.getElementById("editar-fecha").value = persona.fecha;
+    document.getElementById("editar-registro").value = persona.registro;
+    document.getElementById("editar-folio").value = persona.folio;
+    document.getElementById("editar-renglon").value = persona.renglon;
+    document.getElementById("editar-direccion").value = persona.direccion;
+    
+    // Mostrar botones de opciones
+    document.getElementById("boton-opciones").classList.remove('hidden');
+    document.getElementById("contenido-certificado").style.display = 'none';
+  }
+
+  // Buscar persona
+  document.getElementById("formulario").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const cedula = document.getElementById("cedula").value.trim();
+    
+    try {
+      const baseDatos = await cargarDatos();
+      const persona = baseDatos.find(p => 
+        String(p.cedula).replace(/\D/g, '') === cedula.replace(/\D/g, '') || 
+        p.nombre.toLowerCase().includes(cedula.toLowerCase())
+      );
+
+      if (!persona) throw new Error("No se encontró el documento");
+      
+      personaEncontrada = persona;
+      mostrarCertificado(persona);
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+
+  // Mostrar/ocultar opciones
+  document.getElementById("boton-opciones").addEventListener("click", function() {
+    this.classList.add('hidden');
+    document.getElementById("boton-ocultar-opciones").classList.remove('hidden');
+    document.getElementById("grupo-botones").classList.remove('hidden');
+  });
+
+  document.getElementById("boton-ocultar-opciones").addEventListener("click", function() {
+    this.classList.add('hidden');
+    document.getElementById("boton-opciones").classList.remove('hidden');
+    document.getElementById("grupo-botones").classList.add('hidden');
+  });
+
+  // Mostrar vista previa como imagen estática
+  document.getElementById("boton-vista-previa").addEventListener("click", async function() {
+    try {
+      mostrarLoader();
+      
+      // Capturar el certificado como imagen
+      const canvas = await capturarCertificado('png');
+      certificadoCanvas = canvas;
+      
+      // Mostrar la imagen en el contenedor
+      const imagenData = canvas.toDataURL('image/png');
+      document.getElementById("certificado-imagen").src = imagenData;
+      document.getElementById("certificado-imagen-container").classList.remove('hidden');
+      
+      // Cambiar botones
+      this.classList.add('hidden');
+      document.getElementById("boton-ocultar-vista").classList.remove('hidden');
+    } catch (error) {
+      alert("Error al generar vista previa: " + error.message);
+    } finally {
+      ocultarLoader();
+    }
+  });
+
+  // Ocultar vista previa
+  document.getElementById("boton-ocultar-vista").addEventListener("click", function() {
+    document.getElementById("certificado-imagen-container").classList.add('hidden');
+    this.classList.add('hidden');
+    document.getElementById("boton-vista-previa").classList.remove('hidden');
+  });
+
+  // Editar certificado
+  document.getElementById("boton-editar").addEventListener("click", function() {
+    document.getElementById("formulario-edicion").classList.remove('hidden');
+    document.getElementById("boton-guardar").classList.remove('hidden');
+    document.getElementById("boton-aplicar-cambios").classList.add('hidden');
+  });
+
+  document.getElementById("boton-cancelar-edicion").addEventListener("click", function() {
+    document.getElementById("formulario-edicion").classList.add('hidden');
+    // Restaurar datos originales
+    if (datosOriginales) {
+      mostrarCertificado(datosOriginales);
+    }
+  });
+
+  // Guardar cambios
+  document.getElementById("boton-guardar").addEventListener("click", function() {
+    // Cambiar a botón "Aplicar Cambios"
+    document.getElementById("boton-guardar").classList.add('hidden');
+    document.getElementById("boton-aplicar-cambios").classList.remove('hidden');
+  });
+
+  // Aplicar cambios
+  document.getElementById("boton-aplicar-cambios").addEventListener("click", function() {
+    // Actualizar los datos con los valores editados
+    personaEncontrada.nombre = document.getElementById("editar-nombre").value;
+    personaEncontrada.cedula = document.getElementById("editar-cedula").value;
+    personaEncontrada.fecha = document.getElementById("editar-fecha").value;
+    personaEncontrada.registro = document.getElementById("editar-registro").value;
+    personaEncontrada.folio = document.getElementById("editar-folio").value;
+    personaEncontrada.renglon = document.getElementById("editar-renglon").value;
+    personaEncontrada.direccion = document.getElementById("editar-direccion").value;
+    
+    // Actualizar la vista previa
+    mostrarCertificado(personaEncontrada);
+    
+    // Ocultar formulario de edición
+    document.getElementById("formulario-edicion").classList.add('hidden');
+    
+    alert("Cambios aplicados correctamente");
+  });
+
+  // Capturar certificado
+  async function capturarCertificado(formato = 'png') {
+    const elemento = document.getElementById("contenido-certificado");
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Mostrar temporalmente el certificado
+    elemento.style.display = 'block';
+    
+    // Guardar estilos originales
+    const originalStyles = {
+      width: elemento.style.width,
+      height: elemento.style.height,
+      position: elemento.style.position,
+      left: elemento.style.left,
+      top: elemento.style.top
+    };
+    
+    // Fijar dimensiones absolutas para captura
+    elemento.style.width = '210mm';
+    elemento.style.height = '297mm';
+    elemento.style.position = 'absolute';
+    elemento.style.left = '0';
+    elemento.style.top = '0';
+    
+    const options = {
+      scale: isMobile ? 3 : 2,
+      width: 210 * 3.78,
+      height: 297 * 3.78,
+      logging: true,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#FFFFFF',
+      scrollX: 0,
+      scrollY: 0
+    };
+    
+    try {
+      const canvas = await html2canvas(elemento, options);
+      return canvas;
+    } finally {
+      // Restaurar estilos originales
+      elemento.style.width = originalStyles.width;
+      elemento.style.height = originalStyles.height;
+      elemento.style.position = originalStyles.position;
+      elemento.style.left = originalStyles.left;
+      elemento.style.top = originalStyles.top;
+      
+      // Ocultar el certificado original
+      elemento.style.display = 'none';
+    }
+  }
+
+  // Descargar PNG
+  document.getElementById("boton-descarga").addEventListener("click", async function() {
+    try {
+      mostrarLoader();
+      
+      // Usar el canvas ya generado si existe, o crear uno nuevo
+      const canvas = certificadoCanvas || await capturarCertificado('png');
+      
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png', 0.9);
+      link.download = `certificado_${personaEncontrada.cedula}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      alert("Error al generar la imagen: " + error.message);
+    } finally {
+      ocultarLoader();
+    }
+  });
+
+  // Descargar PDF
+  document.getElementById("boton-pdf").addEventListener("click", async function() {
+    try {
+      mostrarLoader();
+      const canvas = await capturarCertificado('pdf');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.9);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`certificado_${personaEncontrada.cedula}.pdf`);
+    } catch (error) {
+      alert("Error al generar el PDF: " + error.message);
+    } finally {
+      ocultarLoader();
+    }
+  });
+
+  // Validar número de WhatsApp
+  function validarNumeroWhatsApp(numero) {
+    const soloNumeros = numero.replace(/\D/g, '');
+    return soloNumeros.length === 10 && /^3[0-9]{9}$/.test(soloNumeros);
+  }
+
+  // Mostrar/ocultar error de WhatsApp
+  document.getElementById("numero-whatsapp").addEventListener("input", function() {
+    const numero = this.value;
+    const errorElement = document.getElementById("whatsapp-error");
+    
+    if (numero && !validarNumeroWhatsApp(numero)) {
+      errorElement.style.display = 'block';
+    } else {
+      errorElement.style.display = 'none';
+    }
+  });
+
+  // Enviar por WhatsApp
+  document.getElementById("boton-whatsapp").addEventListener("click", function() {
+    document.getElementById("whatsapp-control").classList.remove('hidden');
+  });
+
+  document.getElementById("confirmar-whatsapp").addEventListener("click", async function() {
+    const numeroInput = document.getElementById("numero-whatsapp");
+    const numero = numeroInput.value.trim();
+    
+    if (!validarNumeroWhatsApp(numero)) {
+      document.getElementById("whatsapp-error").style.display = 'block';
+      numeroInput.focus();
+      return;
+    }
+    
+    try {
+      mostrarLoader();
+      const canvas = await capturarCertificado('png');
+      const imagenData = canvas.toDataURL('image/png', 0.9);
+      
+      // Descargar la imagen primero
+      const link = document.createElement('a');
+      link.href = imagenData;
+      link.download = `certificado_${personaEncontrada.cedula}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Abrir WhatsApp con el número
+      const numeroWhatsApp = `57${numero.replace(/\D/g, '')}`;
+      window.open(`https://wa.me/${numeroWhatsApp}`, '_blank');
+      
+      // Mostrar instrucciones
+      alert("Por favor adjunte manualmente la imagen del certificado que se acaba de descargar.");
+      
+      // Limpiar y ocultar
+      document.getElementById("whatsapp-control").classList.add('hidden');
+      numeroInput.value = '';
+      
+    } catch (error) {
+      console.error("Error en WhatsApp:", error);
+      alert("Ocurrió un error. Por favor intente nuevamente.");
+    } finally {
+      ocultarLoader();
+    }
+  });
+
+  // Validar email
+  function validarEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  // Mostrar/ocultar error de email
+  document.getElementById("email-destino").addEventListener("input", function() {
+    const email = this.value;
+    const errorElement = document.getElementById("email-error");
+    
+    if (email && !validarEmail(email)) {
+      errorElement.style.display = 'block';
+    } else {
+      errorElement.style.display = 'none';
+    }
+  });
+
+  // Enviar por Email
+  document.getElementById("boton-email").addEventListener("click", function() {
+    document.getElementById("email-control").classList.remove('hidden');
+  });
+
+  document.getElementById("confirmar-email").addEventListener("click", async function() {
+    const email = document.getElementById("email-destino").value.trim();
+    
+    if (!validarEmail(email)) {
+      document.getElementById("email-error").style.display = 'block';
+      document.getElementById("email-destino").focus();
+      return;
+    }
+    
+    try {
+      mostrarLoader();
+      const canvas = await capturarCertificado('pdf');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.9);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      
+      // Descargar el PDF
+      pdf.save(`certificado_${personaEncontrada.cedula}.pdf`);
+      
+      // Mostrar instrucciones
+      alert(`Se ha descargado el certificado. Por favor ábra su cliente de correo y envíelo manualmente a ${email} adjuntando el PDF descargado.`);
+      
+      document.getElementById("email-control").classList.add('hidden');
+      document.getElementById("email-destino").value = '';
+      
+    } catch (error) {
+      console.error("Error al enviar email:", error);
+      alert("Ocurrió un error al preparar el correo. Por favor intente nuevamente.");
+    } finally {
+      ocultarLoader();
+    }
+  });
+</script>
+</body>
+</html>
