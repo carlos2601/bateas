@@ -8,6 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     :root {
       --verde-primario: #4CAF50;
@@ -17,99 +18,204 @@
       --gris-claro: #f5f5f5;
       --gris-oscuro: #424242;
       --blanco: #ffffff;
-      --azul-oscuro: #1a3e72;
-      --azul-claro: #2a5ba7;
-      --rojo: #dc3545;
-      --naranja: #f39c12;
-      --verde-brillante: #0bdb1d;
-      --verde-whatsapp: #25D366;
-      --gris-boton: #6c757d;
-      --morado: #9C27B0;
+      --rojo-primario: #f44336;
+      --azul-primario: #2196F3;
+      --morado-primario: #9C27B0;
     }
     
-    /* ESTILOS GENERALES */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    * {
       margin: 0;
-      padding: 20px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
       background: linear-gradient(135deg, var(--verde-primario), var(--amarillo-primario));
+      min-height: 100vh;
+      padding: 20px;
+      
     }
     
     .header {
-      text-align: center;
-      text-transform: uppercase;
-      font-size: 30px;
+      
+      padding: 1.5rem;
+      border-radius: 12px;
+      
       margin-bottom: 20px;
-      color: rgb(2, 82, 9);
-      font-weight: 800;
+      display: flex;
+      flex-wrap: wrap;
+      
+      text-justify: auto;
+      align-items: center;
+    }
+    
+    .organization-name {
+      color: var(--gris-oscuro);
+      font-weight: 700;
+      font-size: 1.2rem;
       line-height: 1.4;
+      margin-bottom: 10px;
     }
     
-    .formulario, .formulario-edicion, .whatsapp-control {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      margin: 15px auto;
+    .current-date {
+      color: #616161;
+      font-size: 0.9rem;
+    }
+    
+    .logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
       text-align: center;
-      max-width: 400px;
-      width: 100%;
+      margin-bottom: 20px;
     }
     
-    .formulario input[type="text"], 
-    .formulario-edicion input,
-    #numero-whatsapp {
-      width: 94%;
-      padding: 10px 12px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
+    .logo i {
+      font-size: 2.5rem;
+      color: var(--verde-primario);
+      background: linear-gradient(to right, var(--verde-primario), var(--amarillo-primario));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
     }
     
-    .formulario button, 
-    .formulario-edicion button,
-    #confirmar-whatsapp {
+    .logo h1 {
+      color: #2a2a2a;
+      font-weight: 700;
+      font-size: 1.5rem;
+      line-height: 1.3;
+      margin: 10px 0;
+    }
+    
+    .logo .current-date {
+      color: #424242;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    
+    .actions-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
       width: 100%;
-      padding: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 10px 15px;
       border: none;
       border-radius: 8px;
-      background: linear-gradient(to right, var(--verde-primario), var(--amarillo-primario));
-      color: var(--blanco);
-      font-size: 14px;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 10px;
       transition: all 0.3s;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
     
-    .formulario button:hover, 
-    .formulario-edicion button:hover,
-    #confirmar-whatsapp:hover {
-      opacity: 0.9;
+    .btn-primary {
+      background: linear-gradient(to right, var(--verde-primario), var(--amarillo-primario));
+      color: var(--blanco);
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(to right, var(--verde-secundario), var(--amarillo-secundario));
       transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     
-    .formulario-edicion label {
-      font-weight: bold;
-      display: block;
-      margin-top: 10px;
-      text-align: left;
-      font-size: 14px;
+    .btn-danger {
+      background-color: var(--rojo-primario);
+      color: var(--blanco);
+    }
+    
+    .btn-danger:hover {
+      background-color: #d32f2f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-info {
+      background-color: var(--azul-primario);
+      color: var(--blanco);
+    }
+    
+    .btn-info:hover {
+      background-color: #1976D2;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-secondary {
+      background-color: #757575;
+      color: var(--blanco);
+    }
+    
+    .btn-secondary:hover {
+      background-color: #616161;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-purple {
+      background-color: var(--morado-primario);
+      color: var(--blanco);
+    }
+    
+    .btn-purple:hover {
+      background-color: #7B1FA2;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-container {
+      background-color: var(--blanco);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      margin: 0 auto;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 500px;
+    }
+    
+    .form-container h2 {
+      color: var(--gris-oscuro);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .form-container input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 8px 0;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background-color: var(--gris-claro);
+      color: var(--gris-oscuro);
+    }
+    
+    .form-container input[type="text"]:focus {
+      border-color: var(--verde-primario);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+      background-color: var(--blanco);
     }
     
     .button-group {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-top: 15px;
+      margin-top: 20px;
     }
     
-    /* ESTILOS BOTONES */
     .botones-principal {
       display: flex;
       flex-direction: column;
@@ -118,23 +224,6 @@
       margin: 20px auto;
       width: 100%;
       max-width: 800px;
-    }
-    
-    #boton-opciones, #boton-ocultar-opciones {
-      background: var(--azul-oscuro);
-      color: white;
-      padding: 12px 25px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      margin: 10px 0;
-      transition: all 0.3s;
-      width: auto;
-      min-width: 200px;
-      text-align: center;
-      text-transform: uppercase;
     }
     
     .botones-secundarios {
@@ -146,41 +235,11 @@
       width: 100%;
     }
     
-    /* COLORES BOTONES */
-    #boton-editar { background: var(--verde-primario); }
-    #boton-vista-previa { background: var(--naranja); }
-    #boton-ocultar-vista { background: var(--naranja); }
-    #boton-descarga { background: var(--morado); }
-    #boton-pdf { background: var(--rojo); }
-    #boton-whatsapp { background: var(--verde-whatsapp); }
-    #boton-volver { background: var(--gris-boton); }
-    
-    .botones-secundarios button {
-      padding: 12px 15px;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      min-width: 180px;
-      text-transform: uppercase;
-    }
-    
-    .botones-secundarios button:hover, 
-    #boton-opciones:hover, 
-    #boton-ocultar-opciones:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    
     .hidden {
       display: none !important;
     }
     
-    /* CERTIFICADO - ESTILOS MEJORADOS */
+    /* CERTIFICADO - ESTILOS */
     #contenido-certificado {
       font-family: Tahoma, sans-serif;
       width: 210mm;
@@ -211,10 +270,12 @@
       
       .botones-secundarios {
         flex-direction: column;
+        align-items: center;
       }
       
       .botones-secundarios button {
         width: 100%;
+        max-width: 300px;
       }
     }
     
@@ -346,23 +407,28 @@
 </head>
 <body>
 
-  <div class="header">
-    JUNTA DE ACCIÓN COMUNAL<br>
-    BARRIO BATEAS SECTOR 3
+  <div class="logo">
+    <i class="fas fa-certificate"></i>
+    <h1>JUNTA DE ACCIÓN COMUNAL<br>BARRIO BATEAS SECTOR 3</h1>
+    <div class="current-date" id="currentDate"></div>
   </div>
+  
+  <br><br>
 
   <div class="loading-overlay" id="loading-overlay">
     <div class="spinner"></div>
     <p>Generando certificado...</p>
   </div>
 
-  <form id="formulario" class="formulario">
+
+
+  <form id="formulario" class="form-container">
     <h2>Buscar documento</h2>
     <input type="text" id="cedula" placeholder="Número de cédula o Nombre" required />
-    <button type="submit">Consultar</button>
+    <button type="submit" class="btn btn-primary">Consultar</button>
   </form>
 
-  <div id="formulario-edicion" class="formulario-edicion hidden">
+  <div id="formulario-edicion" class="form-container hidden">
     <h3>Editar Datos del Certificado</h3>
     <label for="editar-nombre">Nombre:</label>
     <input type="text" id="editar-nombre">
@@ -386,36 +452,62 @@
     <input type="text" id="editar-direccion">
     
     <div class="button-group">
-      <button id="boton-guardar">Guardar Cambios</button>
-      <button id="boton-aplicar-cambios" class="hidden">Aplicar Cambios</button>
-      <button id="boton-cancelar-edicion">Cancelar</button>
+      <button id="boton-guardar" class="btn btn-primary">Guardar Cambios</button>
+      <button id="boton-aplicar-cambios" class="btn btn-primary hidden">Aplicar Cambios</button>
+      <button id="boton-cancelar-edicion" class="btn btn-secondary">Cancelar</button>
     </div>
   </div>
 
   <div class="botones-principal">
-    <button id="boton-opciones">Opciones</button>
-    <button id="boton-ocultar-opciones" class="hidden">Ocultar Opciones</button>
+    <button id="boton-opciones" class="btn btn-info">
+      <i class="fas fa-cog"></i> Opciones
+    </button>
+    <button id="boton-ocultar-opciones" class="btn btn-info hidden">
+      <i class="fas fa-times"></i> Ocultar Opciones
+    </button>
     
     <div id="grupo-botones" class="hidden">
       <div class="botones-secundarios">
-        <button id="boton-editar">Editar Certificado</button>
-        <button id="boton-vista-previa">Mostrar Vista Previa</button>
-        <button id="boton-ocultar-vista" class="hidden">Ocultar Vista Previa</button>
-        <button id="boton-descarga">Descargar Imagen (PNG)</button>
-        <button id="boton-pdf">Descargar PDF</button>
-        <button id="boton-whatsapp">Enviar por WhatsApp</button>
-        <button id="boton-volver">Volver al Panel</button>
+        <button id="boton-editar" class="btn btn-primary">
+          <i class="fas fa-edit"></i> Editar
+        </button>
+        <button id="boton-vista-previa" class="btn btn-info">
+          <i class="fas fa-eye"></i> Vista Previa
+        </button>
+        <button id="boton-ocultar-vista" class="btn btn-info hidden">
+          <i class="fas fa-eye-slash"></i> Ocultar
+        </button>
+        <button id="boton-descarga" class="btn btn-purple">
+          <i class="fas fa-download"></i> PNG
+        </button>
+        <button id="boton-pdf" class="btn btn-danger">
+          <i class="fas fa-file-pdf"></i> PDF
+        </button>
+        <button id="boton-whatsapp" class="btn" style="background-color: #25D366; color: white;">
+          <i class="fab fa-whatsapp"></i> WhatsApp
+        </button>
+        <button id="boton-volver" class="btn btn-secondary">
+          <i class="fas fa-home"></i> Panel
+        </button>
       </div>
     </div>
   </div>
 
-  <div class="whatsapp-control hidden" id="whatsapp-control">
-    <button class="cerrar" onclick="document.getElementById('whatsapp-control').classList.add('hidden')">×</button>
+  <div class="form-container hidden" id="whatsapp-control">
+    <button class="btn btn-danger" onclick="document.getElementById('whatsapp-control').classList.add('hidden')" style="position: absolute; right: 20px; top: 20px;">
+      <i class="fas fa-times"></i>
+    </button>
     <h3>Enviar por WhatsApp</h3>
     <input type="text" id="numero-whatsapp" placeholder="Número de celular (10 dígitos)" maxlength="10" />
-    <div class="error-message" id="whatsapp-error">Ingrese un número válido de 10 dígitos</div>
-    <div class="whatsapp-info">Solo números colombianos. Ejemplo: 3123456789</div>
-    <button id="confirmar-whatsapp">Enviar Certificado</button>
+    <div class="error-message" id="whatsapp-error" style="color: var(--rojo-primario); display: none; margin-top: 5px;">
+      Ingrese un número válido de 10 dígitos
+    </div>
+    <div class="whatsapp-info" style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+      Solo números colombianos. Ejemplo: 3123456789
+    </div>
+    <button id="confirmar-whatsapp" class="btn" style="background-color: #25D366; color: white; margin-top: 15px;">
+      <i class="fab fa-whatsapp"></i> Enviar Certificado
+    </button>
   </div>
 
   <!-- Certificado (oculto inicialmente) -->
@@ -495,6 +587,13 @@
   let datosOriginales = null;
   let certificadoCanvas = null;
 
+  // Mostrar fecha actual
+  function updateDateTime() {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const today = new Date();
+    document.getElementById('currentDate').textContent = today.toLocaleDateString('es-ES', options);
+  }
+
   // Mostrar loader
   function mostrarLoader() {
     document.getElementById('loading-overlay').style.display = 'flex';
@@ -562,6 +661,7 @@
     const cedula = document.getElementById("cedula").value.trim();
     
     try {
+      mostrarLoader();
       const baseDatos = await cargarDatos();
       const persona = baseDatos.find(p => 
         String(p.cedula).replace(/\D/g, '') === cedula.replace(/\D/g, '') || 
@@ -572,8 +672,10 @@
       
       personaEncontrada = persona;
       mostrarCertificado(persona);
+      ocultarLoader();
     } catch (error) {
       alert(error.message);
+      ocultarLoader();
     }
   });
 
@@ -864,11 +966,9 @@
       ocultarLoader();
     }
   });
-</script>
-<script>
-// Protección básica
-document.addEventListener('contextmenu', (e) => e.preventDefault());
-console.log('%c© Este código es propiedad de [Tu Nombre/Organización]', 'color: red; font-size: 12px;');
+
+  // Inicializar fecha actual
+  updateDateTime();
 </script>
 </body>
 </html>
