@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Afiliados - Junta de Acción Comunal</title>
+    
     <style>
         :root {
             --verde-primario: #4CAF50;
@@ -79,7 +79,7 @@
         .actions-container {
             display: flex;
             gap: 10px;
-            margin-top: 50px;
+            margin-top: 10px;
             width: 100%;
             flex-wrap: wrap;
         }
@@ -185,7 +185,6 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
             padding: 15px;
-            text-align: center;
         }
         
         table {
@@ -213,52 +212,14 @@
         }
         
         /* Columnas más estrechas */
-        th:nth-child(1), td:nth-child(1) { /* Renglón */
-            width: 90px;
-            max-width: 150px;
-            text-align: center;
-        }
-        
-        th:nth-child(2), td:nth-child(2) { /* Folio */
-            width: 70px;
-            max-width: 70px;
-            text-align: center;
-        }
-        
-        th:nth-child(3), td:nth-child(3) { /* Registro */
-            width: 80px;
-            max-width: 80px;
-            text-align: center;
-        }
-        
-        th:nth-child(4), td:nth-child(4) { /* Fecha Afiliación */
-            width: 150px;
-            max-width: 150px;
-            text-align: center;
-        }
-        
-        th:nth-child(5), td:nth-child(5) { /* Cédula */
-            width: 90px;
-            max-width: 90px;
-            
-            text-align: right; /* Alineación opcional */
-        }
-
-        th:nth-child(6), td:nth-child(6) { /* Direccion */
-            width: 300px;
-            max-width: 400px;
-        }
-
-        th:nth-child(7), td:nth-child(7) { /* Nombres */
-            width: 200px;
-            max-width: 200px;
-        }
-        
-        th:nth-child(8), td:nth-child(8) { /* Celular */
-            width: 150px;
-            max-width: 150px;
-            text-align: center;
-        }
+        th:nth-child(1), td:nth-child(1) { width: 60px; text-align: center; } /* Renglón */
+        th:nth-child(2), td:nth-child(2) { width: 70px; text-align: center; } /* Folio */
+        th:nth-child(3), td:nth-child(3) { width: 80px; text-align: center; } /* Registro */
+        th:nth-child(4), td:nth-child(4) { width: 100px; text-align: center; } /* Fecha Afiliación */
+        th:nth-child(5), td:nth-child(5) { width: 90px; } /* Cédula */
+        th:nth-child(6), td:nth-child(6) { width: auto; white-space: normal; } /* Nombres */
+        th:nth-child(7), td:nth-child(7) { width: auto; white-space: normal; } /* Dirección */
+        th:nth-child(8), td:nth-child(8) { width: 100px; } /* Celular */
         
         tr:hover {
             background-color: rgba(76, 175, 80, 0.05);
@@ -275,25 +236,6 @@
             align-items: center;
             gap: 3px;
             margin-right: 5px;
-        }
-        
-        .edit-btn {
-            background-color: var(--amarillo-primario);
-            color: #000;
-        }
-        
-        .edit-btn:hover {
-            background-color: var(--amarillo-secundario);
-        }
-        
-        .save-btn {
-            background-color: var(--verde-primario);
-            color: var(--blanco);
-            display: none;
-        }
-        
-        .save-btn:hover {
-            background-color: var(--verde-secundario);
         }
         
         .delete-btn {
@@ -337,23 +279,81 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
+        
         @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            
             body * {
                 visibility: hidden;
             }
+            
+            .print-header {
+                display: block !important;
+                text-align: left;
+                margin: 0 0 15px 0;
+                font-size: 18px;
+                font-weight: bold;
+                visibility: visible;
+                padding: 10px;
+            }
+            
             .table-container, .table-container * {
                 visibility: visible;
             }
+            
             .table-container {
                 position: absolute;
                 left: 0;
-                top: 0;
+                top: 40px;
                 width: 100%;
                 box-shadow: none;
+                border-radius: 0;
+                padding: 0;
+                background: white;
             }
-            .action-btns {
+            
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+            }
+            
+            th, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                font-size: 12px;
+                white-space: normal !important;
+                overflow: visible !important;
+                text-overflow: clip !important;
+            }
+            
+            th {
+                font-weight: bold !important;
+                background-color: #f5f5f5 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .action-btns, .pagination, .footer, .header, .actions-container {
+                display: none !important;
+            }
+            
+            th:nth-child(9), td:nth-child(9) {
                 display: none;
             }
+            
+            @page {
+                size: auto;
+                margin: 10mm;
+            }
+        }
+        
+        .print-header {
+            display: none;
         }
         
         @media (max-width: 768px) {
@@ -374,14 +374,6 @@
             .action-btn {
                 padding: 3px 5px;
                 font-size: 0.7rem;
-            }
-            
-            /* Ajustes para columnas en móviles */
-            th:nth-child(1), td:nth-child(1),
-            th:nth-child(2), td:nth-child(2),
-            th:nth-child(3), td:nth-child(3) {
-                width: auto;
-                max-width: none;
             }
         }
     </style>
@@ -422,6 +414,10 @@
         </div>
     </div>
     
+    <div class="print-header">
+        JUNTA DE ACCIÓN COMUNAL - BARRIO BATEAS SECTOR 3 - LIBRO DE AFILIADOS
+    </div>
+    
     <div class="table-container">
         <table id="afiliadosTable">
             <thead>
@@ -430,9 +426,9 @@
                     <th>Folio</th>
                     <th>Registro</th>
                     <th>Fecha Afiliación</th>
-                    <th style="text-align: center;">Cédula</th>
-                    <th style="text-align: center;">Nombres</th>
-                    <th style="text-align: center;">Dirección</th>
+                    <th>Cédula</th>
+                    <th>Nombres</th>
+                    <th>Dirección</th>
                     <th>Celular</th>
                     <th>Acciones</th>
                 </tr>
@@ -485,7 +481,7 @@
         function loadAfiliados() {
             database.ref('afiliaciones').once('value').then((snapshot) => {
                 const data = snapshot.val();
-                console.log("Datos crudos de Firebase:", data); // Para depuración
+                console.log("Datos crudos de Firebase:", data);
                 
                 // Convertir el objeto de objetos a un array de objetos con IDs
                 allAfiliados = data ? Object.keys(data).map(key => {
@@ -494,15 +490,15 @@
                         id: key,
                         folio: afiliado.folio || '',
                         registro: afiliado.registro || '',
-                        fecha_afiliacion: afiliado.fecha_afiliacion || afiliado.fechaAfiliacion || afiliado.fecha || afiliado.fecha_ingreso || '',
-                        cedula: afiliado.cedula || afiliado.cedula_afiliado || afiliado.documento || afiliado.documento_identidad || '',
-                        nombres: afiliado.nombres || afiliado.nombre_completo || afiliado.nombre || afiliado.nombre_apellido || '',
-                        direccion: afiliado.direccion || afiliado.direccion_afiliado || afiliado.direccion_residencia || afiliado.residencia || '',
-                        celular: afiliado.celular || afiliado.telefono || afiliado.telefono_contacto || afiliado.numero_celular || ''
+                        fecha_afiliacion: afiliado.fecha_afiliacion || afiliado.fecha || '',
+                        cedula: afiliado.cedula || '',
+                        nombres: afiliado.nombres || afiliado.nombre || '',
+                        direccion: afiliado.direccion || '',
+                        celular: afiliado.celular || afiliado.telefono || ''
                     };
                 }) : [];
                 
-                console.log("Datos procesados:", allAfiliados); // Para depuración
+                console.log("Datos procesados:", allAfiliados);
                 
                 filteredAfiliados = [...allAfiliados];
                 renderTable();
@@ -541,7 +537,6 @@
                     <td>${afiliado.direccion || 'N/A'}</td>
                     <td>${afiliado.celular || 'N/A'}</td>
                     <td class="action-btns">
-                       
                         <button class="action-btn delete-btn" data-id="${afiliado.id}">
                             <i class="fas fa-trash"></i> Eliminar
                         </button>
@@ -551,86 +546,9 @@
             });
             
             // Agregar eventos a los botones
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', enableEdit);
-            });
-            
-            document.querySelectorAll('.save-btn').forEach(btn => {
-                btn.addEventListener('click', saveChanges);
-            });
-            
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', deleteAfiliado);
             });
-        }
-        
-        // Habilitar edición de fila
-        function enableEdit(e) {
-            const row = e.target.closest('tr');
-            const cells = row.querySelectorAll('td:not(:last-child)');
-            
-            // Ignorar la primera columna (renglón)
-            for (let i = 1; i < cells.length - 1; i++) {
-                const cell = cells[i];
-                const originalValue = cell.textContent;
-                cell.innerHTML = `<input type="text" value="${originalValue}" class="edit-input" style="width: 100%; font-size: 0.85rem; padding: 4px;">`;
-            }
-            
-            // Mostrar botón de guardar y ocultar editar
-            const editBtn = row.querySelector('.edit-btn');
-            const saveBtn = row.querySelector('.save-btn');
-            editBtn.style.display = 'none';
-            saveBtn.style.display = 'inline-flex';
-        }
-        
-        // Guardar cambios
-        function saveChanges(e) {
-            const row = e.target.closest('tr');
-            const id = e.target.getAttribute('data-id');
-            const cells = row.querySelectorAll('td:not(:last-child)');
-            const inputs = row.querySelectorAll('.edit-input');
-            
-            const updatedData = {
-                folio: inputs[0].value,
-                registro: inputs[1].value,
-                fecha_afiliacion: inputs[2].value,
-                cedula: inputs[3].value,
-                nombres: inputs[4].value,
-                direccion: inputs[5].value,
-                celular: inputs[6].value
-            };
-            
-            console.log("Datos a guardar:", updatedData); // Para depuración
-            
-            // Actualizar en Firebase bajo 'afiliaciones'
-            database.ref('afiliaciones/' + id).update(updatedData)
-                .then(() => {
-                    console.log("Datos guardados exitosamente en Firebase");
-                    
-                    // Actualizar la fila con los nuevos valores
-                    for (let i = 1; i < cells.length - 1; i++) {
-                        cells[i].textContent = inputs[i - 1].value;
-                    }
-                    
-                    // Mostrar botón de editar y ocultar guardar
-                    const editBtn = row.querySelector('.edit-btn');
-                    const saveBtn = row.querySelector('.save-btn');
-                    editBtn.style.display = 'inline-flex';
-                    saveBtn.style.display = 'none';
-                    
-                    // Actualizar datos locales
-                    const index = allAfiliados.findIndex(a => a.id === id);
-                    if (index !== -1) {
-                        allAfiliados[index] = { ...allAfiliados[index], ...updatedData };
-                    }
-                    
-                    // Mostrar mensaje de éxito
-                    alert("Cambios guardados exitosamente");
-                })
-                .catch(error => {
-                    console.error("Error al actualizar:", error);
-                    alert("Error al guardar cambios. Por favor intente nuevamente.\nError: " + error.message);
-                });
         }
         
         // Eliminar afiliado
