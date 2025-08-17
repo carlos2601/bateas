@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <title>LIBRO DE AFILIADOS - BARRIO BATEAS SECTOR 3</title>
     <style>
         :root {
             --verde-primario: #4CAF50;
@@ -279,28 +279,23 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
-        
         @media print {
+            @page {
+                size: auto;
+                margin: 0;
+            }
+            
             body {
+                margin: 0;
+                padding: 10mm;
                 background: white !important;
-                padding: 0 !important;
-                margin: 0 !important;
             }
             
             body * {
                 visibility: hidden;
             }
             
-            .print-header {
-                display: block !important;
-                text-align: left;
-                margin: 0 0 15px 0;
-                font-size: 18px;
-                font-weight: bold;
-                visibility: visible;
-                padding: 10px;
-            }
-            
+            .print-header, .print-header *,
             .table-container, .table-container * {
                 visibility: visible;
             }
@@ -313,13 +308,11 @@
                 box-shadow: none;
                 border-radius: 0;
                 padding: 0;
-                background: white;
             }
             
             table {
                 width: 100%;
                 border-collapse: collapse;
-                background: white;
             }
             
             th, td {
@@ -327,8 +320,6 @@
                 padding: 8px;
                 font-size: 12px;
                 white-space: normal !important;
-                overflow: visible !important;
-                text-overflow: clip !important;
             }
             
             th {
@@ -338,22 +329,29 @@
                 print-color-adjust: exact;
             }
             
-            .action-btns, .pagination, .footer, .header, .actions-container {
+            .action-btns, .pagination, .footer, .header {
                 display: none !important;
             }
             
             th:nth-child(9), td:nth-child(9) {
                 display: none;
             }
-            
-            @page {
-                size: auto;
-                margin: 10mm;
-            }
         }
         
         .print-header {
             display: none;
+            text-align: left;
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px;
+        }
+        
+        .libro-title {
+            display: block;
+            text-align: center;
+            margin-top: 5px;
+            font-size: 20px;
         }
         
         @media (max-width: 768px) {
@@ -415,8 +413,11 @@
     </div>
     
     <div class="print-header">
-        JUNTA DE ACCIÓN COMUNAL - BARRIO BATEAS SECTOR 3 - LIBRO DE AFILIADOS
+        JUNTA DE ACCIÓN COMUNAL - BARRIO BATEAS SECTOR 3<br>
+        <span class="libro-title">LIBRO DE AFILIADOS - <span id="fechaActual"></span></span>
     </div>
+
+    
     
     <div class="table-container">
         <table id="afiliadosTable">
@@ -450,10 +451,15 @@
     <script>
         // Mostrar fecha actual y año
         function updateDateTime() {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const today = new Date();
-            document.getElementById('currentDate').textContent = today.toLocaleDateString('es-ES', options);
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            const formattedDate = today.toLocaleDateString('es-ES', options).replace(/\//g, '-');
+            
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('es-ES', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            });
             document.getElementById('currentYear').textContent = today.getFullYear();
+            document.getElementById('fechaActual').textContent = formattedDate;
         }
         
         // Configuración de Firebase con tus datos
@@ -579,10 +585,15 @@
         
         // Guardar datos localmente como JSON
         function saveDataLocally() {
+            const today = new Date();
+            const formattedDate = today.toLocaleDateString('es-ES', { 
+                day: '2-digit', month: '2-digit', year: 'numeric' 
+            }).replace(/\//g, '-');
+            
             const dataStr = JSON.stringify(allAfiliados, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
             
-            const exportName = 'afiliados_' + new Date().toISOString().slice(0, 10) + '.json';
+            const exportName = `Libro de Afiliados Bateas Sector 3 - ${formattedDate}.json`;
             
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
@@ -668,7 +679,81 @@
         
         // Imprimir tabla
         document.getElementById('printBtn').addEventListener('click', () => {
-            window.print();
+            // Crear un iframe temporal para la impresión
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            
+            // Clonar el contenido que quieres imprimir
+            const content = document.querySelector('.table-container').cloneNode(true);
+            const printHeader = document.querySelector('.print-header').cloneNode(true);
+            
+            // Crear el documento dentro del iframe
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>LIBRO DE AFILIADOS - BARRIO BATEAS SECTOR 3</title>
+                    <style>
+                        @page {
+                            size: auto;
+                            margin: 10mm;
+                        }
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            font-family: Arial, sans-serif;
+                        }
+                        .print-header {
+                            text-align: left;
+                            margin-bottom: 20px;
+                            font-size: 18px;
+                            font-weight: bold;
+                        }
+                        .libro-title {
+                            display: block;
+                            text-align: center;
+                            margin-top: 5px;
+                            font-size: 20px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        th, td {
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f2f2f2;
+                        }
+                        td:nth-child(1), td:nth-child(2), 
+                        td:nth-child(3), td:nth-child(4) {
+                            text-align: center;
+                        }
+                        .action-btns {
+                            display: none;
+                        }
+                    </style>
+                </head>
+                <body>
+            `);
+            iframeDoc.body.appendChild(printHeader);
+            iframeDoc.body.appendChild(content);
+            iframeDoc.write('</body></html>');
+            iframeDoc.close();
+
+            // Esperar a que cargue el contenido antes de imprimir
+            iframe.onload = function() {
+                setTimeout(() => {
+                    iframe.contentWindow.focus();
+                    iframe.contentWindow.print();
+                    document.body.removeChild(iframe);
+                }, 300);
+            };
         });
         
         // Actualizar datos
