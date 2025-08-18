@@ -255,6 +255,11 @@
                     <label for="direccion">Dirección</label>
                     <textarea id="direccion" class="form-control" rows="1" required></textarea>
                 </div>
+
+                 <div class="form-group">
+                    <label for="fechaExpedicion">Fecha de Expedición del Documento</label>
+                    <input type="date" id="fechaExpedicion" class="form-control">
+                </div>
                 
                 <!-- Campo único para número de celular -->
                 <div class="form-group">
@@ -264,7 +269,7 @@
                            maxlength="10"
                            onkeypress="return soloNumeros(event)"
                            oninput="validarCelular(this)">
-                    <small class="hint">Formato: 10 dígitos, debe comenzar con 3</small>
+                    <small class="hint"></small>
                 </div>
                 
                 <div class="buttons-container">
@@ -370,6 +375,33 @@
             }
         }
 
+        // Función para formatear fecha en formato dd/mm/yyyy sin problemas de zona horaria
+        function formatearFecha(fechaString) {
+            if (!fechaString) return '';
+            
+            // Dividir la fecha en partes para evitar problemas de zona horaria
+            const partesFecha = fechaString.split('-');
+            if (partesFecha.length === 3) {
+                const año = partesFecha[0];
+                const mes = partesFecha[1];
+                const dia = partesFecha[2];
+                return `${dia}/${mes}/${año}`;
+            }
+            
+            // Si no está en formato ISO (para compatibilidad con registros antiguos)
+            const fecha = new Date(fechaString);
+            if (isNaN(fecha.getTime())) {
+                return fechaString; // Si no es una fecha válida, devolver el string original
+            }
+            
+            // Ajustar por zona horaria
+            const dia = fecha.getDate().toString().padStart(2, '0');
+            const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+            const año = fecha.getFullYear();
+            
+            return `${dia}/${mes}/${año}`;
+        }
+
         // 6. Funciones de Firebase
         function cargarUltimoRegistro() {
             afiliacionesRef.orderByChild('fechaRegistro').limitToLast(1).once('value', (snapshot) => {
@@ -396,13 +428,19 @@
                     celularInfo = `<br><strong>Celular:</strong> ${ultimoRegistro.celular1}`;
                 }
                 
+                let fechaExpedicionInfo = '';
+                if (ultimoRegistro.fechaExpedicion) {
+                    fechaExpedicionInfo = `<br><strong>Fecha Expedición:</strong> ${formatearFecha(ultimoRegistro.fechaExpedicion)}`;
+                }
+                
                 ultimoRegistroDiv.innerHTML = `
                     <strong>Nombre:</strong> ${ultimoRegistro.nombre}<br>
                     <strong>Cédula:</strong> ${ultimoRegistro.cedula}<br>
+                    <strong>Fecha Afiliación:</strong> ${formatearFecha(ultimoRegistro.fecha)}<br>
                     <strong>Registro:</strong> ${ultimoRegistro.registro}<br>
-                    <strong>folio:</strong> ${ultimoRegistro.folio}<br>
-                    <strong>renglon:</strong> ${ultimoRegistro.renglon}${celularInfo}<br>
-                    <strong>Fecha:</strong> ${new Date(ultimoRegistro.fecha).toLocaleDateString()}
+                    <strong>Folio:</strong> ${ultimoRegistro.folio}<br>
+                    <strong>Renglón:</strong> ${ultimoRegistro.renglon}<br>
+                    <strong>Dirección:</strong> ${ultimoRegistro.direccion || 'No especificada'}${fechaExpedicionInfo}${celularInfo}
                 `;
                 document.getElementById('ultimoNumeroRegistro').textContent = 
                     ultimoRegistro.registro.replace(/\./g, '');
@@ -424,6 +462,7 @@
             const nombre = document.getElementById('nombre').value.trim();
             const cedula = document.getElementById('cedula').value.replace(/\./g, '');
             const fecha = document.getElementById('fecha').value;
+            const fechaExpedicion = document.getElementById('fechaExpedicion').value;
             const registro = document.getElementById('registro').value.replace(/\./g, '');
             const folio = document.getElementById('folio').value.replace(/\./g, '');
             const renglon = document.getElementById('renglon').value.replace(/\./g, '');
@@ -453,6 +492,7 @@
                     nombre,
                     cedula,
                     fecha,
+                    fechaExpedicion: fechaExpedicion || null, // Guarda null si no hay fecha
                     registro,
                     folio,
                     renglon,
@@ -497,6 +537,7 @@
                         document.getElementById('nombre').value = afiliado.nombre;
                         document.getElementById('cedula').value = afiliado.cedula.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                         document.getElementById('fecha').value = afiliado.fecha;
+                        document.getElementById('fechaExpedicion').value = afiliado.fechaExpedicion || '';
                         document.getElementById('registro').value = afiliado.registro.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                         document.getElementById('folio').value = afiliado.folio.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                         document.getElementById('renglon').value = afiliado.renglon.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
