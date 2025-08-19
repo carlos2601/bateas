@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Descargar Certificado de Afiliación</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --verde-primario: #4CAF50;
+      --verde-secundario: #388E3C;
+      --amarillo-primario: #FFC107;
+      --amarillo-secundario: #FFA000;
+      --gris-claro: #f5f5f5;
+      --gris-oscuro: #424242;
+      --blanco: #ffffff;
+      --rojo-primario: #f44336;
+      --azul-primario: #2196F3;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, var(--verde-primario), var(--amarillo-primario));
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .header {
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      text-justify: auto;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .logo i {
+      font-size: 2.5rem;
+      color: var(--verde-primario);
+      background: linear-gradient(to right, var(--verde-primario), var(--amarillo-primario));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+    }
+    
+    .logo h1 {
+      color: #2a2a2a;
+      font-weight: 700;
+      font-size: 1.5rem;
+      line-height: 1.3;
+      margin: 10px 0;
+    }
+    
+    .form-container {
+      background-color: var(--blanco);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      margin: 0 auto;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 500px;
+    }
+    
+    .form-container h2 {
+      color: var(--gris-oscuro);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .form-container input {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 8px 0;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background-color: var(--gris-claro);
+      color: var(--gris-oscuro);
+    }
+    
+    .form-container input:focus {
+      border-color: var(--verde-primario);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+      background-color: var(--blanco);
+    }
+    
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      justify-content: center;
+      min-width: 150px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(to right, var(--verde-primario), var(--amarillo-primario));
+      color: var(--blanco);
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(to right, var(--verde-secundario), var(--amarillo-secundario));
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-info {
+      background-color: var(--azul-primario);
+      color: var(--blanco);
+    }
+    
+    .btn-info:hover {
+      background-color: #1976D2;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    /* CERTIFICADO - ESTILOS */
+    #contenido-certificado {
+      font-family: Tahoma, sans-serif;
+      width: 210mm;
+      min-height: 260mm;
+      margin: 20px auto;
+      padding: 10mm 20mm;
+      background-image: url('https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/logo.jpg');
+      background-position: center 20%;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      box-sizing: border-box;
+      position: relative;
+      aspect-ratio: 210 / 297;
+      display: none;
+      overflow: hidden;
+      transform-origin: top center;
+    }
+    
+    .encabezado-certificado {
+      text-align: center;
+      font-size: 17px;
+      line-height: 1.4;
+      margin-bottom: 20px;
+      margin-top: 0;
+    }
+    
+    .texto-justificado {
+      text-align: justify;
+      font-size: 9px;
+      line-height: 1.5;
+      margin: 0px 0;
+    }
+    
+    .titulo-certificado {
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.5;
+      margin: 30px 0;
+    }
+    
+    .datos-certificado {
+      text-align: left;
+      font-size: 18px;
+      line-height: 1.6;
+      margin: 20px 0;
+    }
+    
+    .firma-fondo {
+      width: 270px;
+      position: absolute;
+      bottom: 25mm;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .sello-derecha {
+      width: 140px;
+      position: absolute;
+      bottom: 55mm;
+      right: 20mm;
+    }
+    
+    .sello2-fondo {
+      width: 180px;
+      position: absolute;
+      bottom: 45mm;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .pie-certificado {
+      position: absolute;
+      bottom: 20mm;
+      width: calc(100% - 40mm);
+      text-align: center;
+      font-size: 12px;
+    }
+    
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: white;
+    }
+    
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .botones-descarga-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #contenido-certificado, #contenido-certificado * {
+        visibility: visible;
+      }
+      #contenido-certificado {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        padding: 10mm 20mm;
+        box-shadow: none;
+        transform: none !important;
+      }
+    }
+    
+    /* Vista previa para móviles */
+    @media screen and (max-width: 768px) {
+      #contenido-certificado {
+        transform: scale(0.7);
+        margin: 20px auto 40px;
+        overflow-x: auto;
+      }
+
+      .botones-descarga-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo">
+    <i class="fas fa-certificate"></i>
+    <h1>JUNTA DE ACCIÓN COMUNAL<br>BARRIO BATEAS SECTOR 3</h1>
+    <div class="current-date" id="currentDate"></div>
+  </div>
+
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Generando certificado...</p>
+  </div>
+
+  <form id="formulario" class="form-container">
+    <h2>Descargar Certificado</h2>
+    <input type="text" id="cedula" placeholder="Número de cédula" required />
+    <input type="date" id="fechaExpedicion" placeholder="Fecha de expedición del documento" required />
+    <button type="submit" class="btn btn-primary">Buscar Certificado</button>
+  </form>
+
+  <!-- Certificado (oculto inicialmente) -->
+  <div id="contenido-certificado">
+    <div class="encabezado-certificado">
+      <br>
+      <strong>REPUBLICA DE COLOMBIA</strong><br>
+      <strong>DEPARTAMENTO DEL META</strong><br>
+      <strong>PUERTO GAITÁN – META</strong><br>
+      <strong>JUNTA DE ACCIÓN COMUNAL</strong><br>
+      <strong>ASENTAMIENTO HUMANO BATEAS</strong><br>
+      Personería Jurídica No. 101 del 20 de noviembre de 2.012.
+    </div>
+    <div class="texto-justificado">
+      El suscrito presidente del asentamiento humano Bateas, del Municipio de Puerto Gaitán Meta, fundamentado en la ley 1551 del 2012 que modifica el artículo 91 de la ley 136 de 1994, el cual reza en su artículo 91: Funciones. Los Alcaldes ejercerán…y además de estas, en el literal F numeral 6. Con relación a la prosperidad integral de su región; Expedirá la certificación para acreditar la residencia a aquellas personas que residen  en el territorio del área de influencia de los proyectos de exploración y explotación petrolera y minería en general, y que aspiren acceder a labores como mano de  obra no calificada y calificada, Los alcaldes expedirán dichos certificados con base en LOS REGISTROS ELECTORALES O DE SISBEN , ASI COMO LOS REGISTROS DE LOS AFILIADOS DE LAS JUNTAS DE ACCIÓN COMUNAL
+    </div>
+
+    <div class="titulo-certificado">
+      <span style="font-size:18px;">CONSTANCIA DE AFILIACIÓN</span><br>
+      <strong>La Junta de Acción Comunal del Barrio Bateas</strong><br>
+      HACE CONSTAR:<br>
+      Que la información suministrada reposa en el libro de afiliados:
+    </div>
+
+    <div class="datos-certificado">
+      NOMBRE: <strong id="nombre-cert"></strong><br>
+      CÉDULA: <strong id="cedula-cert"></strong><br>
+      FECHA DE AFILIACIÓN: <strong id="fecha-cert"></strong><br>
+      REGISTRO Nº: <strong id="registro-cert"></strong><br>
+      FOLIO Nº: <strong id="folio-cert"></strong><br>
+      RENGLÓN Nº: <strong id="renglon-cert"></strong><br>
+      DIRECCIÓN: <strong id="direccion-cert"></strong><br><br>
+      La presente constancia se expide a solicitud del interesado, <strong id="fecha-emision"></strong> y tiene vigencia de 6 meses a partir de la fecha de su expedición.
+    </div>
+    <br>Atentamente,<br><br><br><br>
+
+    <img src="https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/sello.png" class="sello-derecha" alt="Sello">
+    <img src="https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/firma.png" class="firma-fondo" alt="Firma">
+    <img src="https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/sello2.png" class="sello2-fondo" alt="Sello">
+
+    <div style="text-align:center;margin-top:30px;">
+      __________________________<br>
+      <strong>JUAN CARLOS USECHE B</strong><br>
+      Presidente<br>
+      jacbateasgaitan@gmail.com
+    </div>
+    <br>
+    <div style="text-align:justify;font-size:12px;line-height:1.3;margin-top:25px;"><br><br>
+      Código penal colombiano. "ley 599 de 2000 art. 287.falsedad material en documento público, el que falsifique documentos públicos que pueda servir de prueba, incurrirá en prisión de 3 a 6 años". 
+    </div>
+  </div>
+
+  <div class="form-container hidden" id="botones-descarga">
+    <div class="botones-descarga-container">
+      <button id="boton-vista-previa" class="btn btn-info">
+        <i class="fas fa-eye"></i> Vista Previa
+      </button>
+      <button id="boton-ocultar-vista" class="btn btn-info hidden">
+        <i class="fas fa-eye-slash"></i> Ocultar Vista
+      </button>
+      <button id="boton-descargar-pdf" class="btn btn-primary">
+        <i class="fas fa-file-pdf"></i> Descargar PDF
+      </button>
+    </div>
+  </div>
+
+<script>
+  // Configuración Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyCERQc8srBtLuMe6Jw944WsO1mySohMpkU",
+    authDomain: "junta-bateas-sector-3.firebaseapp.com",
+    databaseURL: "https://junta-bateas-sector-3-default-rtdb.firebaseio.com",
+    projectId: "junta-bateas-sector-3",
+    storageBucket: "junta-bateas-sector-3.appspot.com",
+    messagingSenderId: "913958453084",
+    appId: "1:913958453084:web:5324de6958dfff01980b99"
+  };
+
+  // Inicializar Firebase
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+  const { jsPDF } = window.jspdf;
+
+  // Variables globales
+  let personaEncontrada = null;
+
+  // Mostrar fecha actual
+  function updateDateTime() {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const today = new Date();
+    document.getElementById('currentDate').textContent = today.toLocaleDateString('es-ES', options);
+  }
+
+  // Mostrar loader
+  function mostrarLoader() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+  }
+
+  // Ocultar loader
+  function ocultarLoader() {
+    document.getElementById('loading-overlay').style.display = 'none';
+  }
+
+  // Función para formatear cédula
+  function formatearCedula(cedula) {
+    if (!cedula) return '';
+    return cedula.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  // Función para formatear fecha
+  function formatearFecha(fecha) {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    if (isNaN(date)) return fecha;
+    return date.toLocaleDateString('es-CO');
+  }
+
+  // Mostrar certificado
+  function mostrarCertificado(persona) {
+    document.getElementById("nombre-cert").textContent = persona.nombre;
+    document.getElementById("cedula-cert").textContent = formatearCedula(persona.cedula);
+    document.getElementById("fecha-cert").textContent = formatearFecha(persona.fecha);
+    document.getElementById("registro-cert").textContent = formatearCedula(persona.registro);
+    document.getElementById("folio-cert").textContent = persona.folio;
+    document.getElementById("renglon-cert").textContent = persona.renglon;
+    document.getElementById("direccion-cert").textContent = persona.direccion;
+    document.getElementById("fecha-emision").textContent = formatearFecha(new Date());
+    
+    document.getElementById("botones-descarga").classList.remove('hidden');
+  }
+
+  // Buscar certificado
+  document.getElementById("formulario").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const cedula = document.getElementById("cedula").value.trim();
+    const fechaExpedicion = document.getElementById("fechaExpedicion").value;
+    
+    try {
+      mostrarLoader();
+      
+      // Validar que se ingresó fecha de expedición
+      if (!fechaExpedicion) {
+        throw new Error("Debe ingresar la fecha de expedición del documento");
+      }
+      
+      // Buscar en Firebase
+      const snapshot = await database.ref('afiliaciones').orderByChild('cedula').equalTo(cedula.replace(/\./g, '')).once('value');
+      const data = snapshot.val();
+      
+      if (!data) {
+        throw new Error("No se encontró un certificado con esa cédula");
+      }
+      
+      // Obtener el primer resultado (debería ser único)
+      const key = Object.keys(data)[0];
+      const persona = data[key];
+      
+      // Verificar fecha de expedición
+      if (persona.fechaExpedicion !== fechaExpedicion) {
+        throw new Error("La fecha de expedición no coincide con nuestros registros");
+      }
+      
+      personaEncontrada = persona;
+      mostrarCertificado(persona);
+      
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      ocultarLoader();
+    }
+  });
+
+  // Vista previa
+  document.getElementById("boton-vista-previa").addEventListener("click", function() {
+    const certificado = document.getElementById("contenido-certificado");
+    certificado.style.display = 'block';
+    certificado.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    this.classList.add('hidden');
+    document.getElementById("boton-ocultar-vista").classList.remove('hidden');
+  });
+
+  // Ocultar vista previa
+  document.getElementById("boton-ocultar-vista").addEventListener("click", function() {
+    document.getElementById("contenido-certificado").style.display = 'none';
+    this.classList.add('hidden');
+    document.getElementById("boton-vista-previa").classList.remove('hidden');
+  });
+
+  // Función para capturar certificado
+  async function capturarCertificado() {
+    const elemento = document.getElementById("contenido-certificado");
+    
+    // Mostrar temporalmente el certificado
+    elemento.style.display = 'block';
+    
+    const options = {
+      scale: 2,
+      width: 210 * 3.78,
+      height: 297 * 3.78,
+      logging: true,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#FFFFFF'
+    };
+    
+    try {
+      const canvas = await html2canvas(elemento, options);
+      return canvas;
+    } finally {
+      // Ocultar el certificado original
+      elemento.style.display = 'none';
+    }
+  }
+
+  // Descargar PDF
+  document.getElementById("boton-descargar-pdf").addEventListener("click", async function() {
+    try {
+      mostrarLoader();
+      const canvas = await capturarCertificado();
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      
+      pdf.setProperties({
+        title: `Certificado de Afiliación - ${personaEncontrada.nombre}`,
+        subject: 'Certificado de Afiliación',
+        author: 'Junta de Acción Comunal Barrio Bateas Sector 3',
+        keywords: 'certificado, afiliación, junta de acción comunal',
+        creator: 'Sistema de Certificados JAC Bateas'
+      });
+      
+      pdf.save(`certificado_${personaEncontrada.cedula}.pdf`);
+      
+      // Recargar la página después de descargar
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      
+    } catch (error) {
+      alert("Error al generar el PDF: " + error.message);
+    } finally {
+      ocultarLoader();
+    }
+  });
+
+  // Inicializar fecha actual
+  updateDateTime();
+</script>
+</body>
+</html>
