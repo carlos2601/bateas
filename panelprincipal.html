@@ -14,6 +14,9 @@
             --gris-oscuro: #424242;
             --blanco: #ffffff;
             --azul-primario: #2196F3;
+            --rojo-promario: #9c1f1b;
+            --rojo-secundario: #ac2614;
+
         }
         
         * {
@@ -130,6 +133,10 @@
         .documentos {
             background: linear-gradient(135deg, #9C27B0, #7B1FA2);
         }
+
+        .descargarcertificadodelusuario {
+            background: linear-gradient(135deg, #9c1f1b, #ac2614);
+        }
         
         .card-header i {
             font-size: 1.5rem;
@@ -178,6 +185,11 @@
         
         .documentos .card-btn:hover {
             background-color: #9C27B0;
+            color: var(--blanco);
+        }
+
+        .descargarcertificadodelusuario {
+            bbackground-color: #9c1f1b;
             color: var(--blanco);
         }
         
@@ -285,6 +297,24 @@
                     <a href="documentos.html" class="card-btn">Ver Documentos</a>
                 </div>
             </div>
+
+
+            <!-- Sección Documentos -->
+            <div class="section-card" onclick="location.href='descargarcertificadodelusuario.html'">
+                <div class="card-header descargarcertificadodelusuario">
+                    <i class="fas fa-folder-open"></i>
+                    <h3>Documentos</h3>
+                </div>
+                <div class="card-body">
+                    <p>Pagina principal del usuario.</p>
+                    <div class="stats">
+                        <span><i class="fas fa-folder"></i>45 descaga de certificados</span>
+                        <span><i class="fas fa-calendar-alt"></i> 3 nuevos</span>
+                    </div>
+                    <a href="descargarcertificadodelusuario.html" class="card-btn">Ver Documentos</a>
+                </div>
+            </div>
+
         </div>
     </div>
     
