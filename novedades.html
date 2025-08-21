@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVEDADES - BARRIO BATEAS SECTOR 3</title>
+    <style>
+        :root {
+            --verde-primario: #4CAF50;
+            --verde-secundario: #388E3C;
+            --amarillo-primario: #FFC107;
+            --amarillo-secundario: #FFA000;
+            --gris-claro: #f5f5f5;
+            --gris-oscuro: #424242;
+            --blanco: #ffffff;
+            --rojo-primario: #f44336;
+            --azul-primario: #2196F3;
+            --morado-primario: #9C27B0;
+            --naranja-primario: #FF9800;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--naranja-primario), var(--amarillo-primario));
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            background-color: var(--blanco);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .organization-name {
+            color: var(--gris-oscuro);
+            font-weight: 700;
+            font-size: 1.2rem;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+        
+        .current-date {
+            color: #616161;
+            font-size: 0.9rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+            color: var(--naranja-primario);
+            background: linear-gradient(to right, var(--naranja-primario), var(--amarillo-primario));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo h1 {
+            color: var(--gris-oscuro);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .actions-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--naranja-primario), var(--amarillo-primario));
+            color: var(--blanco);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, #F57C00, var(--amarillo-secundario));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-danger {
+            background-color: var(--rojo-primario);
+            color: var(--blanco);
+        }
+        
+        .btn-danger:hover {
+            background-color: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-info {
+            background-color: var(--azul-primario);
+            color: var(--blanco);
+        }
+        
+        .btn-info:hover {
+            background-color: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary {
+            background-color: #757575;
+            color: var(--blanco);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #616161;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-purple {
+            background-color: var(--morado-primario);
+            color: var(--blanco);
+        }
+        
+        .btn-purple:hover {
+            background-color: #7B1FA2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: var(--gris-claro);
+            color: var(--gris-oscuro);
+        }
+        
+        .search-input:focus {
+            border-color: var(--naranja-primario);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2);
+            background-color: var(--blanco);
+        }
+        
+        .table-container {
+            background-color: var(--blanco);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            padding: 15px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .loading-message {
+            text-align: center;
+            padding: 2rem;
+            color: #757575;
+            font-size: 1.1rem;
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--rojo-primario);
+            font-size: 1.1rem;
+            background-color: rgba(244, 67, 54, 0.1);
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .warning-message {
+            text-align: center;
+            padding: 1.5rem;
+            color: #FF9800;
+            font-size: 1rem;
+            background-color: rgba(255, 152, 0, 0.1);
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #FF9800;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        
+        th, td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        th {
+            background-color: var(--gris-claro);
+            color: var(--gris-oscuro);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        /* Columnas ajustadas */
+        th:nth-child(1), td:nth-child(1) { width: 60px; text-align: center; } /* Renglón */
+        th:nth-child(2), td:nth-child(2) { width: 60px; text-align: center; } /* Folio */
+        th:nth-child(3), td:nth-child(3) { width: 70px; text-align: center; } /* Registro */
+        th:nth-child(4), td:nth-child(4) { width: 100px; text-align: center; } /* Fecha Afiliación */
+        th:nth-child(5), td:nth-child(5) { width: 90px; text-align: center; } /* Cédula */
+        th:nth-child(6), td:nth-child(6) { width: auto; white-space: normal; } /* Nombres */
+        th:nth-child(7), td:nth-child(7) { width: auto; white-space: normal; } /* Dirección */
+        th:nth-child(8), td:nth-child(8) { width: 90px; text-align: center; } /* Celular */
+        th:nth-child(9), td:nth-child(9) { width: 80px; text-align: center; } /* Asamblea 1 */
+        th:nth-child(10), td:nth-child(10) { width: 80px; text-align: center; } /* Asamblea 2 */
+        th:nth-child(11), td:nth-child(11) { width: 80px; text-align: center; } /* Asamblea 3 */
+        th:nth-child(12), td:nth-child(12) { width: auto; white-space: normal; } /* Observaciones */
+        th:nth-child(13), td:nth-child(13) { width: 120px; text-align: center; } /* Acciones */
+        
+        tr:hover {
+            background-color: rgba(255, 152, 0, 0.05);
+        }
+        
+        .action-btn {
+            padding: 5px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            margin-right: 5px;
+        }
+        
+        .edit-btn {
+            background-color: var(--azul-primario);
+            color: var(--blanco);
+        }
+        
+        .edit-btn:hover {
+            background-color: #1976D2;
+        }
+        
+        .save-btn {
+            background-color: var(--verde-primario);
+            color: var(--blanco);
+        }
+        
+        .save-btn:hover {
+            background-color: var(--verde-secundario);
+        }
+        
+        .cancel-btn {
+            background-color: #757575;
+            color: var(--blanco);
+        }
+        
+        .cancel-btn:hover {
+            background-color: #616161;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 5px;
+        }
+        
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            background-color: var(--blanco);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .page-btn.active {
+            background-color: var(--naranja-primario);
+            color: var(--blanco);
+            border-color: var(--naranja-primario);
+        }
+        
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #757575;
+            padding: 15px;
+            background-color: var(--blanco);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .checkbox-cell {
+            text-align: center;
+        }
+        
+        .asistencia-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .observaciones-input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .observaciones-input:focus {
+            outline: none;
+            border-color: var(--naranja-primario);
+            box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2);
+        }
+        
+        .restricted {
+            background-color: rgba(244, 67, 54, 0.1);
+        }
+        
+        .editing {
+            background-color: rgba(33, 150, 243, 0.1);
+        }
+        
+        .edit-input {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .edit-input:focus {
+            outline: none;
+            border-color: var(--naranja-primario);
+            box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2);
+        }
+        
+        @media (max-width: 1024px) {
+            /* Ajustes para tablets */
+            th:nth-child(12), td:nth-child(12) { 
+                width: 200px; 
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .logo {
+                margin-top: 10px;
+            }
+            
+            th, td {
+                padding: 6px 8px;
+                font-size: 0.8rem;
+            }
+            
+            .action-btn {
+                padding: 3px 5px;
+                font-size: 0.7rem;
+            }
+            
+            /* Ocultar algunas columnas en móviles */
+            th:nth-child(2), td:nth-child(2),
+            th:nth-child(3), td:nth-child(3),
+            th:nth-child(9), td:nth-child(9),
+            th:nth-child(10), td:nth-child(10),
+            th:nth-child(11), td:nth-child(11) {
+                display: none;
+            }
+            
+            .observaciones-input {
+                min-height: 40px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <div class="organization-name">
+                JUNTA DE ACCIÓN COMUNAL<br>
+                BARRIO BATEAS SECTOR 3
+            </div>
+            <div class="current-date" id="currentDate"></div>
+        </div>
+        
+        <div class="logo">
+            <i class="fas fa-exclamation-circle"></i>
+            <h1>Control de Novedades</h1>
+        </div>
+        
+        <div class="actions-container">
+            <button class="btn btn-secondary" id="backBtn">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            <button class="btn btn-primary" id="saveAllBtn">
+                <i class="fas fa-save"></i> Guardar Todo
+            </button>
+            <button class="btn btn-info" id="refreshBtn">
+                <i class="fas fa-sync-alt"></i> Actualizar
+            </button>
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar afiliado...">
+        </div>
+    </div>
+    
+    <div class="table-container" id="tableContainer">
+        <div class="loading-message" id="loadingMessage">
+            <i class="fas fa-spinner fa-spin"></i> Cargando datos de afiliados...
+        </div>
+        <div class="error-message" id="errorMessage" style="display: none;"></div>
+        <div class="warning-message" id="warningMessage" style="display: none;">
+            <h3><i class="fas fa-exclamation-triangle"></i> Problema de permisos detectado</h3>
+            <p>No se pueden cargar las novedades debido a restricciones de seguridad.</p>
+            <p>Por favor, verifica las reglas de seguridad en Firebase Console.</p>
+            <div style="margin-top: 15px;">
+                <button class="btn btn-info" id="tryLocalBtn">
+                    <i class="fas fa-database"></i> Usar datos de ejemplo
+                </button>
+            </div>
+        </div>
+        
+        <table id="novedadesTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Renglón</th>
+                    <th>Folio</th>
+                    <th>Registro</th>
+                    <th>Fecha Afiliación</th>
+                    <th>Cédula</th>
+                    <th>Nombres</th>
+                    <th>Dirección</th>
+                    <th>Celular</th>
+                    <th>Asamblea 1</th>
+                    <th>Asamblea 2</th>
+                    <th>Asamblea 3</th>
+                    <th>Observaciones</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="novedadesBody">
+                <!-- Datos se cargarán dinámicamente desde Firebase -->
+            </tbody>
+        </table>
+        
+        <div class="pagination" id="pagination">
+            <!-- Paginación se generará dinámicamente -->
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Sistema de novedades © <span id="currentYear"></span> - Mínimo 2 asistencias requeridas para certificados</p>
+    </div>
+    
+    <script>
+        // Mostrar fecha actual y año
+        function updateDateTime() {
+            const today = new Date();
+            
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('es-ES', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            });
+            document.getElementById('currentYear').textContent = today.getFullYear();
+        }
+        
+        // Configuración de Firebase con tus datos
+        const firebaseConfig = {
+            apiKey: "AIzaSyCERQc8srBtLuMe6Jw944WsO1mySohMpkU",
+            authDomain: "junta-bateas-sector-3.firebaseapp.com",
+            databaseURL: "https://junta-bateas-sector-3-default-rtdb.firebaseio.com",
+            projectId: "junta-bateas-sector-3",
+            storageBucket: "junta-bateas-sector-3.appspot.com",
+            messagingSenderId: "913958453084",
+            appId: "1:913958453084:web:5324de6958dfff01980b99"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // Variables para paginación
+        let currentPage = 1;
+        const rowsPerPage = 10;
+        let allAfiliados = [];
+        let filteredAfiliados = [];
+        let cambiosPendientes = false;
+        let editandoId = null;
+        let usandoDatosEjemplo = false;
+        
+        // Datos de ejemplo para cuando hay problemas de permisos
+        const datosEjemplo = [
+            {
+                id: "1",
+                folio: "01",
+                registro: "02",
+                fecha_afiliacion: "2025-08-18",
+                cedula: "42775182",
+                nombres: "LILIANA LONDOÑO GALLEGO",
+                direccion: "MANZANA 59 CASA 10",
+                celular: "3123456789",
+                asamblea1: true,
+                asamblea2: false,
+                asamblea3: true,
+                observaciones: "Ejemplo de observaciones"
+            },
+            {
+                id: "2",
+                folio: "02",
+                registro: "03",
+                fecha_afiliacion: "2025-07-15",
+                cedula: "12345678",
+                nombres: "JUAN PEREZ",
+                direccion: "MANZANA 12 CASA 5",
+                celular: "3101234567",
+                asamblea1: false,
+                asamblea2: true,
+                asamblea3: false,
+                observaciones: ""
+            }
+        ];
+        
+        // Mostrar mensaje de error
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('novedadesTable').style.display = 'none';
+            document.getElementById('warningMessage').style.display = 'none';
+        }
+        
+        // Mostrar advertencia de permisos
+        function showPermissionWarning() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('novedadesTable').style.display = 'none';
+            document.getElementById('warningMessage').style.display = 'block';
+        }
+        
+        // Mostrar tabla con datos
+        function showTable() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('novedadesTable').style.display = 'table';
+            document.getElementById('warningMessage').style.display = 'none';
+        }
+        
+        // Mostrar carga
+        function showLoading() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('loadingMessage').style.display = 'block';
+            document.getElementById('novedadesTable').style.display = 'none';
+            document.getElementById('warningMessage').style.display = 'none';
+        }
+        
+        // Cargar datos de Firebase desde 'afiliaciones' y 'novedades'
+        function loadAfiliados() {
+            showLoading();
+            usandoDatosEjemplo = false;
+            
+            database.ref('afiliaciones').once('value').then((snapshot) => {
+                const data = snapshot.val();
+                console.log("Datos recibidos de Firebase:", data);
+                
+                if (!data) {
+                    showError("No hay datos de afiliados en Firebase. La base de datos está vacía.");
+                    return;
+                }
+                
+                // Convertir el objeto de objetos a un array de objetos con IDs
+                allAfiliados = Object.keys(data).map(key => {
+                    const afiliado = data[key];
+                    return {
+                        id: key,
+                        folio: afiliado.folio || '',
+                        registro: afiliado.registro || '',
+                        fecha_afiliacion: afiliado.fecha_afiliacion || afiliado.fecha || '',
+                        cedula: afiliado.cedula || '',
+                        nombres: afiliado.nombres || afiliado.nombre || '',
+                        direccion: afiliado.direccion || '',
+                        celular: afiliado.celular || afiliado.telefono || '',
+                        // Valores por defecto para novedades
+                        asamblea1: false,
+                        asamblea2: false,
+                        asamblea3: false,
+                        observaciones: ''
+                    };
+                });
+                
+                console.log("Afiliados procesados:", allAfiliados);
+                
+                // Ahora cargar las novedades si existen
+                loadNovedades();
+            }).catch((error) => {
+                console.error("Error al cargar datos:", error);
+                if (error.code === 'PERMISSION_DENIED') {
+                    showPermissionWarning();
+                } else {
+                    showError("Error al conectar con Firebase: " + error.message);
+                }
+            });
+        }
+        
+        // Cargar novedades desde Firebase
+        function loadNovedades() {
+            database.ref('novedades').once('value').then((snapshot) => {
+                const novedadesData = snapshot.val();
+                
+                if (novedadesData) {
+                    // Combinar datos de afiliados con novedades
+                    allAfiliados.forEach(afiliado => {
+                        if (novedadesData[afiliado.id]) {
+                            Object.assign(afiliado, novedadesData[afiliado.id]);
+                        }
+                    });
+                }
+                
+                filteredAfiliados = [...allAfiliados];
+                showTable();
+                renderTable();
+                renderPagination();
+            }).catch((error) => {
+                console.error("Error al cargar novedades:", error);
+                if (error.code === 'PERMISSION_DENIED') {
+                    // Si no tenemos permisos para novedades, mostramos los datos básicos
+                    filteredAfiliados = [...allAfiliados];
+                    showTable();
+                    renderTable();
+                    renderPagination();
+                    alert("Aviso: No se pudieron cargar las novedades por restricciones de seguridad, pero se cargaron los datos básicos de afiliados.");
+                } else {
+                    showError("Error al cargar las novedades: " + error.message);
+                }
+            });
+        }
+        
+        // Usar datos de ejemplo
+        function usarDatosEjemplo() {
+            allAfiliados = [...datosEjemplo];
+            filteredAfiliados = [...allAfiliados];
+            usandoDatosEjemplo = true;
+            showTable();
+            renderTable();
+            renderPagination();
+        }
+        
+        // Guardar novedades en Firebase
+        function guardarNovedades() {
+            if (usandoDatosEjemplo) {
+                alert("Está usando datos de ejemplo. Los cambios no se guardarán en Firebase.");
+                return;
+            }
+            
+            const novedades = {};
+            
+            allAfiliados.forEach(afiliado => {
+                novedades[afiliado.id] = {
+                    asamblea1: afiliado.asamblea1 || false,
+                    asamblea2: afiliado.asamblea2 || false,
+                    asamblea3: afiliado.asamblea3 || false,
+                    observaciones: afiliado.observaciones || ''
+                };
+            });
+            
+            database.ref('novedades').set(novedades)
+                .then(() => {
+                    alert("Novedades guardadas correctamente.");
+                    cambiosPendientes = false;
+                    document.getElementById('saveAllBtn').classList.remove('btn-danger');
+                    document.getElementById('saveAllBtn').classList.add('btn-primary');
+                })
+                .catch(error => {
+                    console.error("Error al guardar novedades:", error);
+                    if (error.code === 'PERMISSION_DENIED') {
+                        alert("Error: No tiene permisos para guardar novedades en Firebase. Por favor, verifique las reglas de seguridad.");
+                    } else {
+                        alert("Error al guardar las novedades. Por favor intente nuevamente.");
+                    }
+                });
+        }
+        
+        // Guardar novedades individuales en Firebase
+        function guardarNovedadesIndividual(id) {
+            if (usandoDatosEjemplo) {
+                alert("Está usando datos de ejemplo. Los cambios no se guardarán en Firebase.");
+                return;
+            }
+            
+            const afiliado = allAfiliados.find(a => a.id === id);
+            
+            if (afiliado) {
+                const novedades = {
+                    asamblea1: afiliado.asamblea1 || false,
+                    asamblea2: afiliado.asamblea2 || false,
+                    asamblea3: afiliado.asamblea3 || false,
+                    observaciones: afiliado.observaciones || ''
+                };
+                
+                database.ref('novedades/' + id).set(novedades)
+                    .then(() => {
+                        alert("Novedades del afiliado guardadas correctamente.");
+                        editandoId = null;
+                        renderTable();
+                    })
+                    .catch(error => {
+                        console.error("Error al guardar novedades:", error);
+                        if (error.code === 'PERMISSION_DENIED') {
+                            alert("Error: No tiene permisos para guardar novedades en Firebase.");
+                        } else {
+                            alert("Error al guardar las novedades. Por favor intente nuevamente.");
+                        }
+                    });
+            }
+        }
+        
+        // Renderizar tabla con datos
+        function renderTable() {
+            const tbody = document.getElementById('novedadesBody');
+            tbody.innerHTML = '';
+            
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const paginatedAfiliados = filteredAfiliados.slice(start, end);
+            
+            if (paginatedAfiliados.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td colspan="13" style="text-align: center;">No se encontraron afiliados</td>`;
+                tbody.appendChild(tr);
+                return;
+            }
+            
+            paginatedAfiliados.forEach((afiliado, index) => {
+                const tr = document.createElement('tr');
+                if (afiliado.id === editandoId) {
+                    tr.classList.add('editing');
+                }
+                
+                // Calcular asistencias totales
+                const asistencias = [
+                    afiliado.asamblea1,
+                    afiliado.asamblea2, 
+                    afiliado.asamblea3
+                ].filter(Boolean).length;
+                
+                // Aplicar estilo si no cumple con mínimo de asistencias
+                if (asistencias < 2) {
+                    tr.classList.add('restricted');
+                }
+                
+                if (afiliado.id === editandoId) {
+                    // Modo edición
+                    tr.innerHTML = `
+                        <td>${start + index + 1}</td>
+                        <td><input type="text" class="edit-input" data-field="folio" value="${afiliado.folio || ''}"></td>
+                        <td><input type="text" class="edit-input" data-field="registro" value="${afiliado.registro || ''}"></td>
+                        <td><input type="date" class="edit-input" data-field="fecha_afiliacion" value="${afiliado.fecha_afiliacion || ''}"></td>
+                        <td><input type="text" class="edit-input" data-field="cedula" value="${afiliado.cedula || ''}"></td>
+                        <td><input type="text" class="edit-input" data-field="nombres" value="${afiliado.nombres || ''}"></td>
+                        <td><input type="text" class="edit-input" data-field="direccion" value="${afiliado.direccion || ''}"></td>
+                        <td><input type="text" class="edit-input" data-field="celular" value="${afiliado.celular || ''}"></td>
+                        <td class="checkbox-cell">
+                            <input type="checkbox" class="asistencia-checkbox" data-field="asamblea1" ${afiliado.asamblea1 ? 'checked' : ''}>
+                        </td>
+                        <td class="checkbox-cell">
+                            <input type="checkbox" class="asistencia-checkbox" data-field="asamblea2" ${afiliado.asamblea2 ? 'checked' : ''}>
+                        </td>
+                        <td class="checkbox-cell">
+                            <input type="checkbox" class="asistencia-checkbox" data-field="asamblea3" ${afiliado.asamblea3 ? 'checked' : ''}>
+                        </td>
+                        <td>
+                            <textarea class="observaciones-input" data-field="observaciones" placeholder="Observaciones...">${afiliado.observaciones || ''}</textarea>
+                        </td>
+                        <td class="action-btns">
+                            <button class="action-btn save-btn" data-id="${afiliado.id}">
+                                <i class="fas fa-save"></i> Guardar
+                            </button>
+                            <button class="action-btn cancel-btn" data-id="${afiliado.id}">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </td>
+                    `;
+                } else {
+                    // Modo visualización
+                    tr.innerHTML = `
+                        <td>${start + index + 1}</td>
+                        <td>${afiliado.folio || 'N/A'}</td>
+                        <td>${afiliado.registro || 'N/A'}</td>
+                        <td>${afiliado.fecha_afiliacion || 'N/A'}</td>
+                        <td>${afiliado.cedula || 'N/A'}</td>
+                        <td>${afiliado.nombres || 'N/A'}</td>
+                        <td>${afiliado.direccion || 'N/A'}</td>
+                        <td>${afiliado.celular || 'N/A'}</td>
+                        <td class="checkbox-cell">
+                            <input type="checkbox" class="asistencia-checkbox" data-id="${afiliado.id}" data-asamblea="1" ${afiliado.asamblea1 ? 'checked' : ''} ${editandoId ? '' : 'disabled'}>
+                        </td>
+                        <td class="checkbox-cell">
+                            <input type="checkbox" class="asistencia-checkbox" data-id="${afiliado.id}" data-asamblea="2" ${afiliado.asamblea2 ? 'checked' : ''} ${editandoId ? '' : 'disabled'}>
+                        </td>
+                        <td class="checkbox-cell">
+                            <input type="checkbox" class="asistencia-checkbox" data-id="${afiliado.id}" data-asamblea="3" ${afiliado.asamblea3 ? 'checked' : ''} ${editandoId ? '' : 'disabled'}>
+                        </td>
+                        <td>${afiliado.observaciones || ''}</td>
+                        <td class="action-btns">
+                            <button class="action-btn edit-btn" data-id="${afiliado.id}">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                        </td>
+                    `;
+                }
+                
+                tbody.appendChild(tr);
+            });
+            
+            // Agregar eventos a los elementos
+            if (editandoId) {
+                document.querySelectorAll('.edit-input').forEach(input => {
+                    input.addEventListener('input', handleEditInputChange);
+                });
+                
+                document.querySelectorAll('.asistencia-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', handleEditCheckboxChange);
+                });
+                
+                document.querySelectorAll('.observaciones-input').forEach(textarea => {
+                    textarea.addEventListener('input', handleEditObservacionesChange);
+                });
+                
+                document.querySelectorAll('.save-btn').forEach(btn => {
+                    btn.addEventListener('click', guardarEdicion);
+                });
+                
+                document.querySelectorAll('.cancel-btn').forEach(btn => {
+                    btn.addEventListener('click', cancelarEdicion);
+                });
+            } else {
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', iniciarEdicion);
+                });
+                
+                document.querySelectorAll('.asistencia-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', handleCheckboxChange);
+                });
+            }
+        }
+        
+        // Iniciar edición de un afiliado
+        function iniciarEdicion(e) {
+            const id = e.target.getAttribute('data-id');
+            editandoId = id;
+            renderTable();
+        }
+        
+        // Cancelar edición
+        function cancelarEdicion() {
+            editandoId = null;
+            renderTable();
+        }
+        
+        // Guardar edición de un afiliado
+        function guardarEdicion(e) {
+            const id = e.target.getAttribute('data-id');
+            const afiliado = allAfiliados.find(a => a.id === id);
+            
+            if (afiliado) {
+                // Actualizar datos básicos
+                document.querySelectorAll('.edit-input').forEach(input => {
+                    const field = input.getAttribute('data-field');
+                    afiliado[field] = input.value;
+                });
+                
+                // Actualizar checkboxes
+                document.querySelectorAll('.asistencia-checkbox').forEach(checkbox => {
+                    const field = checkbox.getAttribute('data-field');
+                    afiliado[field] = checkbox.checked;
+                });
+                
+                // Actualizar observaciones
+                const observacionesTextarea = document.querySelector('.observaciones-input');
+                if (observacionesTextarea) {
+                    afiliado.observaciones = observacionesTextarea.value;
+                }
+                
+                // Guardar en Firebase
+                guardarAfiliadoCompleto(afiliado);
+            }
+        }
+        
+        // Guardar afiliado completo en Firebase - FUNCIÓN CORREGIDA
+        function guardarAfiliadoCompleto(afiliado) {
+            if (usandoDatosEjemplo) {
+                alert("Está usando datos de ejemplo. Los cambios no se guardarán en Firebase.");
+                editandoId = null;
+                renderTable();
+                return;
+            }
+            
+            // Solo guardar las novedades, no los datos principales
+            // Según tus reglas de Firebase, no tienes permisos para escribir en 'afiliaciones'
+            const novedades = {
+                asamblea1: afiliado.asamblea1 || false,
+                asamblea2: afiliado.asamblea2 || false,
+                asamblea3: afiliado.asamblea3 || false,
+                observaciones: afiliado.observaciones || ''
+            };
+            
+            // Guardar solo las novedades (tienes permisos de escritura aquí)
+            database.ref('novedades/' + afiliado.id).set(novedades)
+                .then(() => {
+                    alert("Datos del afiliado guardados correctamente en novedades.");
+                    editandoId = null;
+                    renderTable();
+                })
+                .catch(error => {
+                    console.error("Error al guardar datos:", error);
+                    if (error.code === 'PERMISSION_DENIED') {
+                        alert("Error: No tiene permisos para guardar en Firebase. Por favor, verifique las reglas de seguridad.");
+                    } else {
+                        alert("Error al guardar los datos. Por favor intente nuevamente.");
+                    }
+                });
+        }
+        
+        // Manejar cambios en inputs de edición
+        function handleEditInputChange(e) {
+            marcarCambiosPendientes();
+        }
+        
+        // Manejar cambios en checkboxes de edición
+        function handleEditCheckboxChange(e) {
+            marcarCambiosPendientes();
+        }
+        
+        // Manejar cambios en observaciones de edición
+        function handleEditObservacionesChange(e) {
+            marcarCambiosPendientes();
+        }
+        
+        // Manejar cambios en checkboxes de asistencias (modo visualización)
+        function handleCheckboxChange(e) {
+            const id = e.target.getAttribute('data-id');
+            const asamblea = e.target.getAttribute('data-asamblea');
+            const checked = e.target.checked;
+            
+            const afiliado = allAfiliados.find(a => a.id === id);
+            if (afiliado) {
+                afiliado[`asamblea${asamblea}`] = checked;
+                guardarNovedadesIndividual(id);
+            }
+        }
+        
+        // Marcar que hay cambios pendientes
+        function marcarCambiosPendientes() {
+            if (!cambiosPendientes) {
+                cambiosPendientes = true;
+                document.getElementById('saveAllBtn').classList.remove('btn-primary');
+                document.getElementById('saveAllBtn').classList.add('btn-danger');
+            }
+        }
+        
+        // Renderizar paginación
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            
+            const totalPages = Math.ceil(filteredAfiliados.length / rowsPerPage);
+            
+            if (totalPages <= 1) return;
+            
+            // Botón Anterior
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                    renderPagination();
+                }
+            });
+            pagination.appendChild(prevBtn);
+            
+            // Números de página
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    renderTable();
+                    renderPagination();
+                });
+                pagination.appendChild(pageBtn);
+            }
+            
+            // Botón Siguiente
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTable();
+                    renderPagination();
+                }
+            });
+            pagination.appendChild(nextBtn);
+        }
+        
+        // Buscar afiliados
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            if (searchTerm === '') {
+                filteredAfiliados = [...allAfiliados];
+            } else {
+                filteredAfiliados = allAfiliados.filter(afiliado => 
+                    (afiliado.nombres && afiliado.nombres.toLowerCase().includes(searchTerm)) ||
+                    (afiliado.cedula && afiliado.cedula.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            currentPage = 1;
+            renderTable();
+            renderPagination();
+        });
+        
+        // Volver al panel principal
+        document.getElementById('backBtn').addEventListener('click', () => {
+            if (cambiosPendientes) {
+                if (confirm('Tiene cambios sin guardar. ¿Está seguro que desea salir?')) {
+                    window.location.href = "panelprincipal.html";
+                }
+            } else {
+                window.location.href = "panelprincipal.html";
+            }
+        });
+        
+        // Guardar todas las novedades
+        document.getElementById('saveAllBtn').addEventListener('click', guardarNovedades);
+        
+        // Actualizar datos
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            if (cambiosPendientes) {
+                if (confirm('Tiene cambios sin guardar. ¿Está seguro que desea recargar?')) {
+                    loadAfiliados();
+                    cambiosPendientes = false;
+                    document.getElementById('saveAllBtn').classList.remove('btn-danger');
+                    document.getElementById('saveAllBtn').classList.add('btn-primary');
+                }
+            } else {
+                loadAfiliados();
+            }
+        });
+        
+        // Usar datos de ejemplo
+        document.getElementById('tryLocalBtn').addEventListener('click', usarDatosEjemplo);
+        
+        // Inicializar
+        updateDateTime();
+        loadAfiliados();
+    </script>
+</body>
+</html>
