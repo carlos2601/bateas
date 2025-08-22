@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Afiliación - Junta de Acción Comunal</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        :root {
+            --verde-primario: #4CAF50;
+            --verde-secundario: #388E3C;
+            --amarillo-primario: #FFC107;
+            --amarillo-secundario: #FFA000;
+            --gris-claro: #f5f5f5;
+            --gris-oscuro: #424242;
+            --blanco: #ffffff;
+            --rojo-primario: #F44336;
+            --azul-claro: #E3F2FD;
+            --azul-oscuro: #0D47A1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--verde-primario) 0%, var(--amarillo-primario) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            background-color: #FFC107;
+            
+            color: var(--blanco);
+            padding: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 0;
+        }
+        
+        .header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .header h2 {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .form-container {
+            background-color: var(--blanco);
+            padding: 2rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+       
+        
+        .form-group {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--azul-oscuro);
+            font-weight: 700;
+            background-color: var(--azul-claro);
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.99rem;
+        }
+        
+        .form-control {
+            border: 0.3px solid #9ac29c;
+            width: 100%;
+            padding: 0.5rem 1.2rem;
+            border: 1px solid #d1d1c0;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+        }
+        
+        .form-control:focus {
+            border-color: var(--verde-primario);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25);
+            background-color: #fff;
+        }
+        
+        .btn {
+            padding: 0.9rem 1.6rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 0.6rem;
+            margin-top: 0.6rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to bottom, var(--verde-primario), var(--verde-secundario));
+            color: var(--blanco);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to bottom, var(--verde-secundario), var(--verde-primario));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to bottom, var(--amarillo-primario), var(--amarillo-secundario));
+            color: var(--gris-oscuro);
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(to bottom, var(--amarillo-secundario), var(--amarillo-primario));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(to bottom, var(--rojo-primario), #D32F2F);
+            color: var(--blanco);
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(to bottom, #D32F2F, var(--rojo-primario));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn-back {
+            background: linear-gradient(to bottom, #757575, #616161);
+            color: var(--blanco);
+        }
+        
+        .btn-back:hover {
+            background: linear-gradient(to bottom, #616161, #757575);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 0.0rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--gris-claro);
+        }
+        
+        .last-record {
+            background-color: #dbdbdf;
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 1.8rem;
+            border-left: 5px solid var(--azul-oscuro);
+        }
+        
+        .last-record h4 {
+            color: var(--azul-oscuro);
+            margin-bottom: 0.6rem;
+            font-size: 1.1rem;
+        }
+        
+        .hint {
+            color: #616161;
+            font-size: 0.85rem;
+            display: block;
+            margin-top: 0.4rem;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            .form-container {
+                padding: 1.5rem;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 0.6rem;
+                margin-right: 0;
+            }
+            
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .header h2 {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Estilos para los iconos de los botones */
+        .btn i {
+            margin-right: 8px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JUNTA DE ACCIÓN COMUNAL SECTOR 3</h1>
+            <h2>REGISTRO DE AFILIACIÓN DEL USUARIO</h2>
+        </div>
+        
+        <div class="form-container">
+            
+            
+            <!-- Sección de último registro -->
+            <div class="last-record">
+                <h4><i class="fas fa-info-circle"></i> Último Registro Ingresado</h4>
+                <p id="ultimoRegistro">Cargando...</p>
+            </div>
+            
+            <form id="afiliacionForm">
+                <div class="form-group">
+                    <label for="nombre">Nombre Completo</label>
+                    <input type="text" id="nombre" class="form-control" required 
+                           onkeypress="return soloLetras(event)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cedula">Cédula</label>
+                    <input type="text" id="cedula" class="form-control" required 
+                           maxlength="30"
+                           onkeypress="return soloNumeros(event)" 
+                           oninput="formatearCedula(this)">
+                    
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha">Fecha de Afiliación</label>
+                    <input type="date" id="fecha" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registro">Registro</label>
+                    <input type="text" id="registro" class="form-control" required 
+                           onkeypress="return soloNumeros(event)" 
+                           oninput="formatearPuntoMil(this)">
+                   
+                </div>
+                
+                <div class="form-group">
+                    <label for="folio">Folio</label>
+                    <input type="text" id="folio" class="form-control" required 
+                           onkeypress="return soloNumeros(event)" 
+                           oninput="formatearPuntoMil(this)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="renglon">Renglón</label>
+                    <input type="text" id="renglon" class="form-control" required 
+                           onkeypress="return soloNumeros(event)" 
+                           oninput="formatearPuntoMil(this)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <textarea id="direccion" class="form-control" rows="2" required></textarea>
+                </div>
+
+                 <div class="form-group">
+                    <label for="fechaExpedicion">Fecha de Expedición del Documento</label>
+                    <input type="date" id="fechaExpedicion" class="form-control">
+                </div>
+                
+                <!-- Campo único para número de celular -->
+                <div class="form-group">
+                    <label for="celular">Número de Celular</label>
+                    <input type="text" id="celular" class="form-control" 
+                           placeholder=""
+                           maxlength="10"
+                           onkeypress="return soloNumeros(event)"
+                           oninput="validarCelular(this)">
+                    <small class="hint"></small>
+                </div>
+                
+                <div class="buttons-container">
+                    <div>
+                        <button type="button" class="btn btn-primary" id="guardarBtn">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="editarBtn">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-danger" id="borrarBtn">
+                            <i class="fas fa-trash-alt"></i> Borrar
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-back" id="volverBtn">
+                        <i class="fas fa-arrow-left"></i> Volver al Menú
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 1. Configuración de Firebase (TUS CREDENCIALES)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCERQc8srBtLuMe6Jw944WsO1mySohMpkU",
+            authDomain: "junta-bateas-sector-3.firebaseapp.com",
+            projectId: "junta-bateas-sector-3",
+            storageBucket: "junta-bateas-sector-3.firebasestorage.app",
+            messagingSenderId: "913958453084",
+            appId: "1:913958453084:web:5324de6958dfff01980b99"
+        };
+
+        // 2. Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const afiliacionesRef = database.ref('afiliaciones');
+
+        // 3. Variables globales
+        let ultimoRegistro = null;
+        let editMode = false;
+        let currentAfiliacionId = null;
+
+        // 4. Cargar último registro al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarUltimoRegistro();
+            // Establecer fecha actual por defecto
+            document.getElementById('fecha').valueAsDate = new Date();
+        });
+
+        // 5. Validaciones de campos
+        function soloLetras(e) {
+            const key = e.key;
+            const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/;
+            if (!regex.test(key) && key !== 'Backspace') {
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        }
+
+        function soloNumeros(e) {
+            const key = e.key;
+            const regex = /^[0-9]$/;
+            if (!regex.test(key) && key !== 'Backspace') {
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        }
+
+        function formatearCedula(input) {
+            let value = input.value.replace(/\./g, '');
+            if (value.length > 0) {
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            input.value = value;
+        }
+
+        function formatearPuntoMil(input) {
+            let value = input.value.replace(/\./g, '');
+            if (value.length > 0) {
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            input.value = value;
+        }
+
+        // Función para validar celular colombiano
+        function validarCelular(input) {
+            let value = input.value.replace(/\D/g, '');
+            input.value = value;
+            
+            // Validar longitud (celulares colombianos tienen 10 dígitos)
+            if (value.length > 10) {
+                input.value = value.substring(0, 10);
+            }
+            
+            // Validar que empiece con 3 (celulares colombianos empiezan con 3)
+            if (value.length > 0 && !value.startsWith('3')) {
+                input.setCustomValidity("El celular debe empezar con 3");
+            } else {
+                input.setCustomValidity("");
+            }
+        }
+
+        // Función para formatear fecha en formato dd/mm/yyyy sin problemas de zona horaria
+        function formatearFecha(fechaString) {
+            if (!fechaString) return '';
+            
+            // Dividir la fecha en partes para evitar problemas de zona horaria
+            const partesFecha = fechaString.split('-');
+            if (partesFecha.length === 3) {
+                const año = partesFecha[0];
+                const mes = partesFecha[1];
+                const dia = partesFecha[2];
+                return `${dia}/${mes}/${año}`;
+            }
+            
+            // Si no está en formato ISO (para compatibilidad con registros antiguos)
+            const fecha = new Date(fechaString);
+            if (isNaN(fecha.getTime())) {
+                return fechaString; // Si no es una fecha válida, devolver el string original
+            }
+            
+            // Ajustar por zona horaria
+            const dia = fecha.getDate().toString().padStart(2, '0');
+            const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+            const año = fecha.getFullYear();
+            
+            return `${dia}/${mes}/${año}`;
+        }
+
+        // 6. Funciones de Firebase
+        function cargarUltimoRegistro() {
+            afiliacionesRef.orderByChild('fechaRegistro').limitToLast(1).once('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const key = Object.keys(data)[0];
+                    ultimoRegistro = data[key];
+                    ultimoRegistro.id = key;
+                    mostrarUltimoRegistro();
+                } else {
+                    document.getElementById('ultimoRegistro').textContent = 'No hay registros previos';
+                }
+            });
+        }
+
+        function mostrarUltimoRegistro() {
+            const ultimoRegistroDiv = document.getElementById('ultimoRegistro');
+            
+            if (ultimoRegistro) {
+                let celularInfo = '';
+                if (ultimoRegistro.celular) {
+                    celularInfo = `<br><strong>Celular:</strong> ${ultimoRegistro.celular}`;
+                } else if (ultimoRegistro.celular1) { // Compatibilidad con registros antiguos
+                    celularInfo = `<br><strong>Celular:</strong> ${ultimoRegistro.celular1}`;
+                }
+                
+                let fechaExpedicionInfo = '';
+                if (ultimoRegistro.fechaExpedicion) {
+                    fechaExpedicionInfo = `<br><strong>Fecha Expedición:</strong> ${formatearFecha(ultimoRegistro.fechaExpedicion)}`;
+                }
+                
+                ultimoRegistroDiv.innerHTML = `
+                    <strong>Nombre:</strong> ${ultimoRegistro.nombre}<br>
+                    <strong>Cédula:</strong> ${ultimoRegistro.cedula}<br>
+                    <strong>Fecha Afiliación:</strong> ${formatearFecha(ultimoRegistro.fecha)}<br>
+                    <strong>Registro:</strong> ${ultimoRegistro.registro}<br>
+                    <strong>Folio:</strong> ${ultimoRegistro.folio}<br>
+                    <strong>Renglón:</strong> ${ultimoRegistro.renglon}<br>
+                    <strong>Dirección:</strong> ${ultimoRegistro.direccion || 'No especificada'}${fechaExpedicionInfo}${celularInfo}
+                `;
+                document.getElementById('ultimoNumeroRegistro').textContent = 
+                    ultimoRegistro.registro.replace(/\./g, '');
+            }
+        }
+
+        // 7. Funciones de los botones
+        document.getElementById('guardarBtn').addEventListener('click', guardarAfiliacion);
+        document.getElementById('editarBtn').addEventListener('click', editarAfiliacion);
+        document.getElementById('borrarBtn').addEventListener('click', borrarAfiliacion);
+        document.getElementById('volverBtn').addEventListener('click', () => {
+            if (confirm('¿Volver al menú principal?')) {
+                window.location.href = 'panelprincipal.html';
+            }
+        });
+
+        // 8. Guardar en Firebase
+        function guardarAfiliacion() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const cedula = document.getElementById('cedula').value.replace(/\./g, '');
+            const fecha = document.getElementById('fecha').value;
+            const fechaExpedicion = document.getElementById('fechaExpedicion').value;
+            const registro = document.getElementById('registro').value.replace(/\./g, '');
+            const folio = document.getElementById('folio').value.replace(/\./g, '');
+            const renglon = document.getElementById('renglon').value.replace(/\./g, '');
+            const direccion = document.getElementById('direccion').value.trim();
+            const celular = document.getElementById('celular').value.trim();
+
+            // Validaciones comunes
+            if (cedula.length < 7) {
+                alert('La cédula debe tener al menos 7 dígitos');
+                return;
+            }
+
+            // Validar celular si está presente
+            if (celular && (celular.length !== 10 || !celular.startsWith('3'))) {
+                alert('El celular debe tener 10 dígitos y comenzar con 3');
+                return;
+            }
+
+            // SOLO validar secuencia de registros para NUEVOS registros
+            if (!editMode && ultimoRegistro && parseInt(registro) <= parseInt(ultimoRegistro.registro.replace(/\./g, ''))) {
+                alert(`El registro debe ser mayor al último (${ultimoRegistro.registro})`);
+                return;
+            }
+
+            if (confirm(editMode ? '¿Confirmar cambios?' : '¿Guardar nueva afiliación?')) {
+                const afiliacionData = {
+                    nombre,
+                    cedula,
+                    fecha,
+                    fechaExpedicion: fechaExpedicion || null, // Guarda null si no hay fecha
+                    registro,
+                    folio,
+                    renglon,
+                    direccion,
+                    celular, // Guardamos el celular en un solo campo
+                    fechaRegistro: new Date().toISOString()
+                };
+
+                if (editMode && currentAfiliacionId) {
+                    // Editar registro existente
+                    afiliacionesRef.child(currentAfiliacionId).update(afiliacionData)
+                        .then(() => {
+                            alert('Afiliación actualizada correctamente');
+                            resetForm();
+                            cargarUltimoRegistro();
+                        })
+                        .catch(error => alert('Error al actualizar: ' + error.message));
+                } else {
+                    // Nuevo registro
+                    afiliacionesRef.push(afiliacionData)
+                        .then(() => {
+                            alert('Afiliación guardada correctamente');
+                            resetForm();
+                            cargarUltimoRegistro();
+                        })
+                        .catch(error => alert('Error al guardar: ' + error.message));
+                }
+            }
+        }
+
+        // 9. Editar registro
+        function editarAfiliacion() {
+            const cedula = prompt("Ingrese la cédula del afiliado a editar (sin puntos):");
+            
+            if (cedula) {
+                afiliacionesRef.orderByChild('cedula').equalTo(cedula).once('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        const key = Object.keys(data)[0];
+                        const afiliado = data[key];
+                        
+                        document.getElementById('nombre').value = afiliado.nombre;
+                        document.getElementById('cedula').value = afiliado.cedula.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        document.getElementById('fecha').value = afiliado.fecha;
+                        document.getElementById('fechaExpedicion').value = afiliado.fechaExpedicion || '';
+                        document.getElementById('registro').value = afiliado.registro.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        document.getElementById('folio').value = afiliado.folio.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        document.getElementById('renglon').value = afiliado.renglon.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        document.getElementById('direccion').value = afiliado.direccion;
+                        
+                        // Llenar campo de celular (compatible con registros antiguos)
+                        if (afiliado.celular) {
+                            document.getElementById('celular').value = afiliado.celular;
+                        } else if (afiliado.celular1) {
+                            document.getElementById('celular').value = afiliado.celular1;
+                        }
+                        
+                        editMode = true;
+                        currentAfiliacionId = key;
+                        alert('Modo edición activado para: ' + afiliado.nombre);
+                    } else {
+                        alert('No se encontró afiliado con esa cédula');
+                    }
+                });
+            }
+        }
+
+        // 10. Borrar registro
+        function borrarAfiliacion() {
+            const cedula = prompt("Ingrese la cédula del afiliado a borrar (sin puntos):");
+            
+            if (cedula) {
+                if (confirm('¿Está seguro de borrar este registro?')) {
+                    afiliacionesRef.orderByChild('cedula').equalTo(cedula).once('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            const key = Object.keys(data)[0];
+                            afiliacionesRef.child(key).remove()
+                                .then(() => {
+                                    alert('Registro borrado correctamente');
+                                    resetForm();
+                                    cargarUltimoRegistro();
+                                })
+                                .catch(error => alert('Error al borrar: ' + error.message));
+                        } else {
+                            alert('No se encontró afiliado con esa cédula');
+                        }
+                    });
+                }
+            }
+        }
+
+        // 11. Resetear formulario
+        function resetForm() {
+            document.getElementById('afiliacionForm').reset();
+            document.getElementById('fecha').valueAsDate = new Date();
+            editMode = false;
+            currentAfiliacionId = null;
+        }
+
+        // 12. Prevenir pegado de texto no válido
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('paste', (e) => e.preventDefault());
+        });
+    </script>
+</body>
+</html>
