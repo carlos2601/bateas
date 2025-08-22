@@ -336,7 +336,7 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            opacity: 1.7;
+            opacity: 5.7;
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
@@ -753,10 +753,10 @@
         const imgLocal = new Image();
         imgLocal.onload = function() {
             // Si la imagen local carga, usar imágenes locales
-            selloImg.src = 'img/sello.png';
-            firmaImg.src = 'img/firma.png';
-            sello2Img.src = 'img/sello2.png';
-            background.style.backgroundImage = 'url(img/logo.jpg)';
+            selloImg.src = 'sello.png';
+            firmaImg.src = 'firma.png';
+            sello2Img.src = 'sello2.png';
+            background.style.backgroundImage = 'url(logo.jpg)';
         };
         imgLocal.onerror = function() {
             // Si no hay imágenes locales, usar las remotas
