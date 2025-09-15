@@ -73,7 +73,7 @@
         
         .logo h1 {
             color: var(--dark);
-            font-weight: 700;
+            font-weight: 500;
             font-size: 1.5rem;
             line-height: 1.3;
         }
@@ -317,8 +317,10 @@
         #contenido-certificado {
             font-family: Tahoma, sans-serif;
             width: 210mm; /* Ancho A4 */
-            min-height: 277mm; /* Alto A4 */
+            min-height: 257mm; /* Alto A4 */
             padding: 20mm;  /* 3.5cm en todos los lados */
+            padding-top: 30px;
+            
             background-color: white;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
             box-sizing: border-box;
@@ -329,16 +331,18 @@
         }
         
         .certificado-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0.1;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
+                position: absolute;
+                top: 0.8px; /* Baja el logo 20px */
+                left: 0px;
+                width: 100%; /* Reduce el ancho al 90% */
+                height: 100%; /* Reduce el alto al 90% */
+                z-index: 1;
+                opacity: 1.5;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: contain; /* o usa 'cover' según prefieras */
+                
+                transform: translateX(0); /* Elimina transformaciones anteriores si las hay */
         }
         
         .certificado-content {
@@ -359,7 +363,7 @@
         
         .texto-justificado {
             text-align: justify;
-            font-size: 12px;
+            font-size: 10px;
             line-height: 1.5;
             margin: -10px 0;
         }
@@ -389,7 +393,7 @@
         }
         
         .sello-derecha {
-            width: 120px;
+            width: 140px;
             position: absolute;
             bottom: 10px;
             right: 10px;
@@ -477,7 +481,7 @@
                 left: 0;
                 top: 0;
                 width: 210mm;
-                height: 277mm;
+                height: 257mm;
                 margin: 0;
                 padding: 35mm;
                 box-shadow: none;
@@ -659,12 +663,12 @@
             <div class="datos-certificado">
                 EL Señor <strong id="nombre-cert"></strong>, identificad(o) con cédula <strong id="cedula-cert"></strong> con fecha de afiliación <strong id="fecha-cert"></strong>, solicita Desafiliación de la junta de barrio Bateas para trasladarse <strong id="traslado-cert"></strong>.<br><br>
 
-                La presente constancia se expide a solicitud del interesado, <strong id="fecha-emision"></strong> y tiene vigencia de 6 meses a partir de la fecha de su expedición.
+                La presente constancia se expide a solicitud del interesado, el dia <strong id="fecha-emision"></strong> y tiene vigencia de 6 meses a partir de la fecha de su expedición.
             
                 
             </div>
             <div class="datos-certificado">
-                <br>Atentamente,<br><br><br>
+               Atentamente,<br><br>
             </div>
             
             
@@ -814,7 +818,7 @@
             selloImg.src = 'https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/sello.png';
             firmaImg.src = 'https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/firma.png';
             sello2Img.src = 'https://raw.githubusercontent.com/carlos2601/certificados-afiliacion/main/sello2.png';
-            background.style.backgroundImage = 'url(https://raw.githubusercontent.com/carlos2601/bateas/main/logo.jpg)';
+            background.style.backgroundImage = 'url(https://raw.githubusercontent.com/carlos2601/bateas/main/logo.jpg';
         };
         imgLocal.src = 'img/sello.png'; // Probar con una imagen local
     }
@@ -836,14 +840,24 @@
         return cedula.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
-    // Función para formatear fecha
-    function formatearFecha(fecha) {
-        if (!fecha) return '';
-        const date = new Date(fecha);
-        if (isNaN(date)) return fecha;
-        return date.toLocaleDateString('es-CO');
-    }
-
+    
+   // Función para formatear fecha
+function formatearFecha(fecha) {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    if (isNaN(date)) return fecha;
+    
+    const meses = [
+        "enero", "febrero", "marzo", "abril", "mayo", "junio",
+        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    ];
+    
+    const dia = date.getDate();
+    const mes = meses[date.getMonth()];
+    const año = date.getFullYear();
+    
+    return `${dia} de ${mes} de ${año}`;
+}
     // Cargar JSON manualmente
     function cargarJSONManual() {
         const input = document.createElement('input');
