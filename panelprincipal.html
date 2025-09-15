@@ -20,10 +20,6 @@
             --naranja-secundario: #F57C00;
             --cafe-primario: #964B00;
             --cafe-secundario: #905010;
-            
-            
-            
-
         }
         
         * {
@@ -137,7 +133,7 @@
             background: linear-gradient(135deg, var(--amarillo-primario), var(--amarillo-secundario));
         }
 
-         .traslados {
+        .traslados {
             background: linear-gradient(135deg, var(--cafe-primario), var(--cafe-secundario));
         }
         
@@ -195,6 +191,11 @@
         
         .certificados .card-btn:hover {
             background-color: var(--amarillo-primario);
+            color: var(--blanco);
+        }
+        
+        .traslados .card-btn:hover {
+            background-color: var(--cafe-primario);
             color: var(--blanco);
         }
         
@@ -302,18 +303,19 @@
                 </div>
             </div>
 
+             <!-- Sección Traslados (CORREGIDA) -->
              <div class="section-card" onclick="location.href='traslados.html'">
-                <div class="card-header traslado">
-                    <i class="fas fa-traslado"></i>
-                    <h3>Certificados de traslados</h3>
+                <div class="card-header traslados">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h3>Certificados de Traslados</h3>
                 </div>
                 <div class="card-body">
                     <p>Genera y administra certificados de traslados para miembros y documentos oficiales.</p>
                     <div class="stats">
-                        <span><i class="fas fa-file-alt"></i> 30 emitidos</span>
-                        <span><i class="fas fa-sync-alt"></i> 5 por renovar</span>
+                        <span><i class="fas fa-file-alt"></i> 15 emitidos</span>
+                        <span><i class="fas fa-sync-alt"></i> 2 por renovar</span>
                     </div>
-                    <a href="certificados.html" class="card-btn">Gestionar Certificados</a>
+                    <a href="traslados.html" class="card-btn">Gestionar Traslados</a>
                 </div>
             </div>
             
@@ -380,5 +382,4 @@
         document.getElementById('currentYear').textContent = new Date().getFullYear();
     </script>
 </body>
-
 </html>
