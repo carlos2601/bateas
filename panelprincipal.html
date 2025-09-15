@@ -18,6 +18,11 @@
             --rojo-secundario: #ac2614;
             --naranja-primario: #FF9800;
             --naranja-secundario: #F57C00;
+            --cafe-primario: #964B00;
+            --cafe-secundario: #905010;
+            
+            
+            
 
         }
         
@@ -130,6 +135,10 @@
         
         .certificados {
             background: linear-gradient(135deg, var(--amarillo-primario), var(--amarillo-secundario));
+        }
+
+         .traslados {
+            background: linear-gradient(135deg, var(--cafe-primario), var(--cafe-secundario));
         }
         
         .documentos {
@@ -292,6 +301,21 @@
                     <a href="certificados.html" class="card-btn">Gestionar Certificados</a>
                 </div>
             </div>
+
+             <div class="section-card" onclick="location.href='traslados.html'">
+                <div class="card-header traslado">
+                    <i class="fas fa-traslado"></i>
+                    <h3>Certificados de traslados</h3>
+                </div>
+                <div class="card-body">
+                    <p>Genera y administra certificados de traslados para miembros y documentos oficiales.</p>
+                    <div class="stats">
+                        <span><i class="fas fa-file-alt"></i> 30 emitidos</span>
+                        <span><i class="fas fa-sync-alt"></i> 5 por renovar</span>
+                    </div>
+                    <a href="certificados.html" class="card-btn">Gestionar Certificados</a>
+                </div>
+            </div>
             
             <!-- Sección Documentos -->
             <div class="section-card" onclick="location.href='documentos.html'">
@@ -356,4 +380,5 @@
         document.getElementById('currentYear').textContent = new Date().getFullYear();
     </script>
 </body>
+
 </html>
