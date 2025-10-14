@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Autenticidad - Junta Bateas</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8BC34A;
+            --primary-dark: #689F38;
+            --secondary: #FFC107;
+            --secondary-dark: #FFA000;
+            --accent: #4CAF50;
+            --light: #F1F8E9;
+            --dark: #33691E;
+            --text: #212121;
+            --text-light: #757575;
+            --background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: var(--background);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .header {
+            border-radius: 16px;
+            padding: 0px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            margin-bottom: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo h1 {
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 1.5rem;
+            line-height: 1.3;
+        }
+        
+        .current-date {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .verification-container {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .status-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .status-valid {
+            color: #4CAF50;
+        }
+        
+        .status-invalid {
+            color: #f44336;
+        }
+        
+        .status-warning {
+            color: #FF9800;
+        }
+        
+        .result-container {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            width: 100%;
+            display: none;
+        }
+        
+        .user-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+        
+        .info-value {
+            color: var(--text);
+            font-size: 1rem;
+        }
+        
+        .certificate-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            flex-direction: column;
+            color: white;
+            display: none;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+            border-left: 4px solid #c62828;
+            display: none;
+        }
+        
+        .success-message {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+            border-left: 4px solid #2e7d32;
+            display: none;
+        }
+        
+        .code-display {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 1.1rem;
+            border: 2px dashed #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>JUNTA DE ACCIÓN COMUNAL<br>BARRIO BATEAS SECTOR 3</h1>
+                <div class="current-date" id="currentDate"></div>
+            </div>
+        </div>
+        
+        <div class="verification-container">
+            <div class="status-icon" id="statusIcon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h2>Verificación de Autenticidad</h2>
+            <p>Verifique la autenticidad de un certificado usando el código de seguridad</p>
+            
+            <div class="code-display" id="codeDisplay">
+                Código a verificar: <strong id="currentCode">Cargando...</strong>
+            </div>
+        </div>
+        
+        <div class="error-message" id="errorMessage">
+            <h3><i class="fas fa-exclamation-triangle"></i> Certificado No Válido</h3>
+            <p>El código de seguridad no corresponde a ningún certificado válido.</p>
+            <p>Posibles causas:</p>
+            <ul style="text-align: left; margin: 10px 0;">
+                <li>El código ha expirado</li>
+                <li>El certificado ha sido revocado</li>
+                <li>El código es incorrecto</li>
+            </ul>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            <h3><i class="fas fa-check-circle"></i> Certificado Válido</h3>
+            <p>El certificado ha sido verificado exitosamente y es auténtico.</p>
+        </div>
+        
+        <div class="result-container" id="resultContainer">
+            <h3>Información del Afiliado</h3>
+            <div class="user-info" id="userInfo">
+                <!-- Los datos del usuario se llenarán aquí -->
+            </div>
+            
+            <div class="certificate-details">
+                <h4><i class="fas fa-info-circle"></i> Detalles del Certificado</h4>
+                <p>Este certificado fue emitido por la Junta de Acción Comunal Barrio Bateas Sector 3 y es válido por 6 meses a partir de la fecha de expedición.</p>
+                <p><strong>Fecha de verificación:</strong> <span id="verificationDate"></span></p>
+            </div>
+            
+            <a href="https://carlos2601.github.io/bateas/" class="btn btn-primary" style="margin-top: 20px;">
+                <i class="fas fa-home"></i> Volver al Inicio
+            </a>
+        </div>
+    </div>
+    
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p id="loadingText">Verificando certificado...</p>
+    </div>
+
+    <script>
+        // Configuración Firebase (la misma que en la página principal)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCERQc8srBtLuMe6Jw944WsO1mySohMpkU",
+            authDomain: "junta-bateas-sector-3.firebaseapp.com",
+            databaseURL: "https://junta-bateas-sector-3-default-rtdb.firebaseio.com",
+            projectId: "junta-bateas-sector-3",
+            storageBucket: "junta-bateas-sector-3.appspot.com",
+            messagingSenderId: "913958453084",
+            appId: "1:913958453084:web:5324de6958dfff01980b99"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Variables globales
+        let codigoVerificacion = '';
+        let datosAfiliados = [];
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarApp();
+        });
+
+        function inicializarApp() {
+            // Mostrar fecha actual
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date();
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('es-ES', options);
+            document.getElementById('verificationDate').textContent = today.toLocaleDateString('es-CO');
+            
+            // Obtener código de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            codigoVerificacion = urlParams.get('codigo');
+            
+            if (codigoVerificacion) {
+                document.getElementById('currentCode').textContent = codigoVerificacion;
+                verificarCertificado();
+            } else {
+                mostrarError('No se proporcionó un código de verificación');
+            }
+        }
+
+        function mostrarLoader(texto = "Verificando certificado...") {
+            document.getElementById('loadingText').textContent = texto;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function ocultarLoader() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function mostrarError(mensaje) {
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'none';
+            document.getElementById('statusIcon').innerHTML = '<i class="fas fa-times-circle status-invalid"></i>';
+        }
+
+        function mostrarExito() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('resultContainer').style.display = 'block';
+            document.getElementById('statusIcon').innerHTML = '<i class="fas fa-check-circle status-valid"></i>';
+        }
+
+        // Función para generar código de seguridad (igual que en la página principal)
+        function generarCodigoSeguridad(cedula, nombre, fechaAfiliacion, registro) {
+            const datosCombinados = `${cedula}${nombre}${fechaAfiliacion}${registro}`;
+            let hash = 0;
+            for (let i = 0; i < datosCombinados.length; i++) {
+                const char = datosCombinados.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            const codigoHex = Math.abs(hash).toString(16).toUpperCase();
+            const codigoFinal = codigoHex.substring(0, 8).padStart(8, '0');
+            return `BAT${codigoFinal}`;
+        }
+
+        // Función para normalizar datos (igual que en la página principal)
+        function normalizarDatos(datos) {
+            return datos.map(persona => {
+                if (persona.nombre && persona.cedula) {
+                    return {
+                        id: persona.id || '',
+                        nombre: persona.nombre,
+                        cedula: persona.cedula,
+                        fecha_afiliacion: persona.fecha_afiliacion || persona.fecha,
+                        registro: persona.registro || '',
+                        folio: persona.folio || '',
+                        renglon: persona.renglon || '',
+                        direccion: persona.direccion || '',
+                        telefono: persona.telefono || ''
+                    };
+                } else if (persona.nombres && persona.cedula) {
+                    return {
+                        id: persona.id || '',
+                        nombre: persona.nombres,
+                        cedula: persona.cedula,
+                        fecha_afiliacion: persona.fecha_afiliacion || persona.fecha,
+                        registro: persona.registro || '',
+                        folio: persona.folio || '',
+                        renglon: persona.renglon || '',
+                        direccion: persona.direccion || '',
+                        telefono: persona.telefono || ''
+                    };
+                }
+                return persona;
+            });
+        }
+
+        // Función para formatear cédula
+        function formatearCedula(cedula) {
+            if (!cedula) return '';
+            return cedula.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        // Función para formatear fecha
+        function formatearFecha(fecha) {
+            if (!fecha) return '';
+            const date = new Date(fecha);
+            if (isNaN(date)) return fecha;
+            return date.toLocaleDateString('es-CO');
+        }
+
+        // Función principal para verificar el certificado
+        async function verificarCertificado() {
+            try {
+                mostrarLoader();
+                
+                // Cargar datos de afiliados
+                const snapshot = await database.ref('afiliaciones').once('value');
+                const data = snapshot.val();
+                
+                if (!data) {
+                    throw new Error("No hay datos disponibles");
+                }
+                
+                // Convertir objeto a array
+                const datos = Object.keys(data).map(key => {
+                    return { id: key, ...data[key] };
+                });
+                
+                datosAfiliados = normalizarDatos(datos);
+                
+                // Buscar el afiliado que coincide con el código
+                let afiliadoEncontrado = null;
+                
+                for (const afiliado of datosAfiliados) {
+                    const codigoGenerado = generarCodigoSeguridad(
+                        afiliado.cedula,
+                        afiliado.nombre,
+                        afiliado.fecha_afiliacion,
+                        afiliado.registro
+                    );
+                    
+                    if (codigoGenerado === codigoVerificacion) {
+                        afiliadoEncontrado = afiliado;
+                        break;
+                    }
+                }
+                
+                if (afiliadoEncontrado) {
+                    // Mostrar información del afiliado
+                    mostrarInformacionAfiliado(afiliadoEncontrado);
+                    mostrarExito();
+                } else {
+                    mostrarError('Código de seguridad no válido');
+                }
+                
+            } catch (error) {
+                console.error("Error en verificación:", error);
+                mostrarError('Error al verificar el certificado: ' + error.message);
+            } finally {
+                ocultarLoader();
+            }
+        }
+
+        // Función para mostrar la información del afiliado
+        function mostrarInformacionAfiliado(afiliado) {
+            const userInfo = document.getElementById('userInfo');
+            
+            const html = `
+                <div class="info-item">
+                    <div class="info-label">Nombre completo</div>
+                    <div class="info-value">${afiliado.nombre}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Cédula</div>
+                    <div class="info-value">${formatearCedula(afiliado.cedula)}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Fecha de afiliación</div>
+                    <div class="info-value">${formatearFecha(afiliado.fecha_afiliacion)}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Registro Nº</div>
+                    <div class="info-value">${formatearCedula(afiliado.registro)}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Folio Nº</div>
+                    <div class="info-value">${afiliado.folio}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Renglón Nº</div>
+                    <div class="info-value">${afiliado.renglon}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Dirección</div>
+                    <div class="info-value">${afiliado.direccion}</div>
+                </div>
+                ${afiliado.telefono ? `
+                <div class="info-item">
+                    <div class="info-label">Teléfono/Celular</div>
+                    <div class="info-value">${afiliado.telefono}</div>
+                </div>
+                ` : ''}
+            `;
+            
+            userInfo.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
