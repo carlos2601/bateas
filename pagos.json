@@ -1,0 +1,60 @@
+{
+  "fechaActualizacion": "2025-10-18T22:12:00.097Z",
+  "totalRecibos": 4,
+  "siguienteNumeroRecibo": 21,
+  "recibos": [
+    {
+      "numero": "019",
+      "codigo": "BAT-019-2025",
+      "fecha": "2025-10-18",
+      "nombre": "CARLOS ALBERTO QUIÑONES MUÑOZ",
+      "cedula": "4438681",
+      "direccion": "MZ 10",
+      "telefono": "",
+      "fechaAfiliacion": "2025-08-21",
+      "concepto": "cuota",
+      "monto": 5000,
+      "mes": "agosto",
+      "anio": "2025"
+    },
+    {
+      "numero": "019",
+      "codigo": "BAT-019-2025",
+      "fecha": "2025-10-18",
+      "nombre": "CARLOS ALBERTO QUIÑONES MUÑOZ",
+      "cedula": "4438681",
+      "direccion": "MZ 10",
+      "fechaAfiliacion": "2025-08-21",
+      "concepto": "cuota",
+      "monto": 5000,
+      "mes": "septiembre",
+      "anio": "2025"
+    },
+    {
+      "numero": "001",
+      "codigo": "ABC123XYZ",
+      "fecha": "2025-10-18",
+      "nombre": "DORA ELENA MUÑOZ FLOREZ",
+      "cedula": "30343481",
+      "direccion": "MANZANA 59 CASA 10",
+      "fechaAfiliacion": "2025-10-18",
+      "concepto": "cuota",
+      "monto": 5000,
+      "mes": "octubre",
+      "anio": "2025"
+    },
+    {
+      "numero": "020",
+      "codigo": "BAT-020-2025",
+      "fecha": "2025-10-18",
+      "nombre": "CARLOS ALBERTO QUIÑONES MUÑOZ",
+      "cedula": "4438681",
+      "direccion": "MZ 10",
+      "fechaAfiliacion": "2025-08-21",
+      "concepto": "cuota",
+      "monto": 5000,
+      "mes": "octubre",
+      "anio": "2025"
+    }
+  ]
+}
