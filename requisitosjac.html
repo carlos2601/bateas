@@ -33,9 +33,9 @@
 
         .document-page {
             width: 21.59cm;
-            height: 27.94cm;
+            min-height: 27.94cm;
             background-color: white;
-            padding: 1.5cm 2.5cm; /* Padding reducido */
+            padding: 1.5cm 2.5cm;
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             display: flex;
@@ -52,7 +52,7 @@
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
-            opacity: 2.0;
+            opacity: 0.3; /* Logo más claro */
             filter: brightness(1.0);
             z-index: 0;
         }
@@ -68,11 +68,11 @@
         /* Estilos de títulos */
         .header {
             text-align: center;
-            margin-bottom: 0.5cm; /* Margen reducido */
+            margin-bottom: 0.5cm;
         }
         
         .header h4 {
-            font-size: 13pt; /* Tamaño reducido */
+            font-size: 13pt;
             font-weight: bold;
             color: #000000;
             margin-bottom: 0.1cm;
@@ -81,41 +81,41 @@
         }
         
         .main-title {
-            font-size: 14pt; /* Tamaño reducido */
+            font-size: 14pt;
             font-weight: bold;
             text-align: center;
             text-decoration: underline;
-            margin: 0.3cm 0 0.5cm 0; /* Márgenes reducidos */
+            margin: 0.3cm 0 0.5cm 0;
             color: #000000;
             text-transform: uppercase;
         }
         
         .content {
-            font-size: 12pt; /* Tamaño reducido */
+            font-size: 12pt;
             text-align: justify;
-            line-height: 1.4; /* Interlineado reducido */
+            line-height: 1.4;
         }
         
         h2 {
-            font-size: 13pt; /* Tamaño reducido */
-            margin: 0.5cm 0 0.2cm 0; /* Márgenes reducidos */
+            font-size: 13pt;
+            margin: 0.5cm 0 0.2cm 0;
             color: #000000;
             font-weight: bold;
             text-decoration: underline;
         }
         
         ol {
-            margin: 0.3cm 0 0.3cm 1.2cm; /* Márgenes reducidos */
+            margin: 0.3cm 0 0.3cm 1.2cm;
         }
         
         li {
-            margin-bottom: 0.4cm; /* Margen reducido */
-            line-height: 1.5; /* Interlineado reducido */
+            margin-bottom: 0.4cm;
+            line-height: 1.5;
         }
         
         .footer {
             text-align: center;
-            font-size: 9pt; /* Tamaño reducido */
+            font-size: 9pt;
             margin-top: 0.5cm;
             padding-top: 0.3cm;
             border-top: 1px solid #ddd;
@@ -136,10 +136,10 @@
         .action-button {
             color: white;
             border: none;
-            padding: 8px 16px; /* Tamaño reducido */
+            padding: 8px 16px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 12pt; /* Tamaño reducido */
+            font-size: 12pt;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             font-weight: bold;
         }
@@ -151,7 +151,6 @@
         .download-button {
             background: #3498db;
         }
-
 
         .logout-btn {
             background: #e74c3c;
@@ -200,22 +199,6 @@
             min-width: 120px;
         }
 
-        .logout-btn {
-            background: #e74c3c;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 4px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border: none;
-            cursor: pointer;
-            min-width: 120px;
-        }
-
-
-
         /* Configuración de impresión mejorada */
         @media print {
             body {
@@ -236,8 +219,8 @@
             .document-page {
                 box-shadow: none !important;
                 margin: 0 !important;
-                padding: 1cm 2cm !important; /* Padding reducido para impresión */
-                page-break-after: avoid !important; /* Evita salto de página */
+                padding: 1cm 2cm !important;
+                page-break-after: avoid !important;
                 height: 27.94cm !important;
                 width: 21.59cm !important;
             }
@@ -247,23 +230,99 @@
             }
             
             .page-background {
-                opacity: 0.3 !important;
+                opacity: 0.15 !important; /* Logo aún más claro para impresión */
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             
             @page {
-                size: A4;
-                margin: 0 !important; /* Elimina márgenes que causan la URL */
-                
-                /* Elimina encabezados y pies de página del navegador */
+                size: letter; /* Cambiado a tamaño carta */
+                margin: 0 !important;
                 marks: none !important;
-                
-                /* Márgenes mínimos para contenido */
                 margin-top: 0.5cm !important;
                 margin-bottom: 0.5cm !important;
                 margin-left: 1.5cm !important;
                 margin-right: 1.5cm !important;
+            }
+        }
+
+        /* Estilos responsivos para dispositivos móviles */
+        @media screen and (max-width: 768px) {
+            .pages-container {
+                max-width: 100%;
+                padding: 0 10px;
+            }
+            
+            .document-page {
+                width: 100%;
+                min-height: auto;
+                padding: 1cm;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            
+            .header h4 {
+                font-size: 11pt;
+            }
+            
+            .main-title {
+                font-size: 12pt;
+            }
+            
+            .content {
+                font-size: 10pt;
+            }
+            
+            h2 {
+                font-size: 11pt;
+            }
+            
+            .button-container {
+                position: relative;
+                bottom: auto;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            }
+            
+            .panel-btn, .print-btn, .logout-btn {
+                min-width: 100px;
+                padding: 6px 12px;
+                font-size: 10pt;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .document-page {
+                padding: 0.8cm;
+            }
+            
+            .header h4 {
+                font-size: 10pt;
+            }
+            
+            .main-title {
+                font-size: 11pt;
+            }
+            
+            .content {
+                font-size: 9pt;
+            }
+            
+            h2 {
+                font-size: 10pt;
+            }
+            
+            ol {
+                margin-left: 0.8cm;
+            }
+            
+            .button-container {
+                gap: 10px;
+            }
+            
+            .panel-btn, .print-btn, .logout-btn {
+                min-width: 80px;
+                padding: 5px 10px;
+                font-size: 9pt;
             }
         }
     </style>
@@ -323,8 +382,7 @@
     </div>
     
     <script>
-
-function cerrarSesion() {
+        function cerrarSesion() {
             if (confirm("¿Está seguro que desea cerrar sesión?")) {
                 window.location.href = "login.html";
             }
