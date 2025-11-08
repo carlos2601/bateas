@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funciones de Dignatarios JAC - Ley 2166 de 2021</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #FFD700, #32CD32);
+            padding: 30px;
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .header h2 {
+            font-size: 18px;
+            color: #5a6a7a;
+            font-weight: 600;
+        }
+        
+        .legal-reference {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .dignatario-section {
+            margin-bottom: 25px;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .dignatario-header {
+            background: #3498db;
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .dignatario-header:hover {
+            background: #2980b9;
+        }
+        
+        .dignatario-header h3 {
+            font-size: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dignatario-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .dignatario-content.active {
+            padding: 25px;
+            max-height: 1000px;
+        }
+        
+        .funcion-item {
+            margin-bottom: 12px;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        
+        .funcion-item:before {
+            content: "•";
+            color: #3498db;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .certification-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+        
+        .certification-note strong {
+            color: #e74c3c;
+        }
+        
+        .article-reference {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .article-reference h3 {
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+        
+        .print-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .print-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            
+            .dignatario-content {
+                max-height: none !important;
+                padding: 25px !important;
+            }
+            
+            .print-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>FUNCIONES DE LOS DIGNATARIOS</h1>
+            <h2>JUNTA DE ACCIÓN COMUNAL - LEY 2166 DE 2021</h2>
+        </div>
+        
+        <div class="legal-reference">
+            <strong>Ley 2166 de 2021 - "Por medio de la cual se modifica la Ley 743 de 2002 y se dictan otras disposiciones"</strong>
+        </div>
+        
+        <div class="content">
+            <!-- Presidente -->
+            <div class="dignatario-section">
+                <div class="dignatario-header" onclick="toggleContent(this)">
+                    <h3>
+                        PRESIDENTE/A
+                        <span>▼</span>
+                    </h3>
+                </div>
+                <div class="dignatario-content">
+                    <div class="funcion-item">Representar legalmente a la Junta de Acción Comunal ante toda clase de entidades</div>
+                    <div class="funcion-item">Convocar y presidir las reuniones de la Asamblea General y Junta Directiva</div>
+                    <div class="funcion-item">Coordinar la ejecución de planes, programas y proyectos comunitarios</div>
+                    <div class="funcion-item">Presentar informes de gestión periódicos a la comunidad</div>
+                    <div class="funcion-item">Velar por el cumplimiento de estatutos y reglamentos internos</div>
+                    <div class="funcion-item">Suscribir junto con el Secretario los actas de las reuniones</div>
+                    <div class="funcion-item">Promover la participación ciudadana y la solución de problemas comunitarios</div>
+                    
+                    
+                </div>
+            </div>
+            
+            <!-- Vicepresidente -->
+            <div class="dignatario-section">
+                <div class="dignatario-header" onclick="toggleContent(this)">
+                    <h3>
+                        VICEPRESIDENTE/A
+                        <span>▼</span>
+                    </h3>
+                </div>
+                <div class="dignatario-content">
+                    <div class="funcion-item">Reemplazar al Presidente en sus ausencias temporales o definitivas</div>
+                    <div class="funcion-item">Colaborar con el Presidente en el desarrollo de las funciones asignadas</div>
+                    <div class="funcion-item">Coordinar comisiones especiales designadas por la Junta Directiva</div>
+                    <div class="funcion-item">Velar por el cumplimiento de los acuerdos de la Asamblea General</div>
+                    <div class="funcion-item">Apoyar en la relación con otras organizaciones comunitarias e instituciones</div>
+                    <div class="funcion-item">Suplir las funciones de otros dignatarios en caso de ausencia</div>
+                </div>
+            </div>
+            
+            <!-- Secretario -->
+            <div class="dignatario-section">
+                <div class="dignatario-header" onclick="toggleContent(this)">
+                    <h3>
+                        SECRETARIO/A
+                        <span>▼</span>
+                    </h3>
+                </div>
+                <div class="dignatario-content">
+                    <div class="funcion-item">Llevar y actualizar los libros de actas, registro de afiliados y correspondencia</div>
+                    <div class="funcion-item">Elaborar y suscribir las actas de las reuniones junto con el Presidente</div>
+                    <div class="funcion-item">Mantener organizado y actualizado el archivo general de la organización</div>
+                    <div class="funcion-item">Notificar las convocatorias a reuniones de acuerdo con los estatutos</div>
+                    <div class="funcion-item">Conservar y custodiar la documentación legal de la organización</div>
+                    <div class="funcion-item">Llevar el control de la correspondencia recibida y enviada</div>
+                    <div class="funcion-item">Mantener el registro actualizado de afiliados con sus datos completos</div>
+		    <div class="funcion-item">Firmar las constancias de afiliación</div>
+                    
+                    
+                </div>
+            </div>
+            
+            <!-- Tesorero -->
+            <div class="dignatario-section">
+                <div class="dignatario-header" onclick="toggleContent(this)">
+                    <h3>
+                        TESORERO/A
+                        <span>▼</span>
+                    </h3>
+                </div>
+                <div class="dignatario-content">
+                    <div class="funcion-item">Llevar los libros de contabilidad y registros financieros de la organización</div>
+                    <div class="funcion-item">Manejar los fondos y recursos económicos de la Junta de Acción Comunal</div>
+                    <div class="funcion-item">Presentar informes financieros periódicos a la Junta Directiva</div>
+                    <div class="funcion-item">Elaborar el presupuesto anual y presentarlo para aprobación</div>
+                    <div class="funcion-item">Realizar los cobros de cuotas y pagos autorizados</div>
+                    <div class="funcion-item">Mantener en orden la documentación financiera y bancaria</div>
+                    <div class="funcion-item">Rendir cuentas claras a la Asamblea General anualmente</div>
+                    <div class="funcion-item">Llevar control de inventario de bienes de la organización</div>
+                </div>
+            </div>
+            
+            <!-- Fiscal -->
+            <div class="dignatario-section">
+                <div class="dignatario-header" onclick="toggleContent(this)">
+                    <h3>
+                        FISCAL
+                        <span>▼</span>
+                    </h3>
+                </div>
+                <div class="dignatario-content">
+                    <div class="funcion-item">Vigilar el estricto cumplimiento de los estatutos y reglamentos internos</div>
+                    <div class="funcion-item">Supervisar la gestión administrativa y financiera de la organización</div>
+                    <div class="funcion-item">Verificar la correcta llevanza de los libros de actas y contabilidad</div>
+                    <div class="funcion-item">Presentar informes de vigilancia y control a la Asamblea General</div>
+                    <div class="funcion-item">Velar por la transparencia en la gestión de todos los dignatarios</div>
+                    <div class="funcion-item">Promover la rendición de cuentas y la participación comunitaria</div>
+                    <div class="funcion-item">Investigar quejas y reclamos de los afiliados sobre la gestión</div>
+                    <div class="funcion-item">Verificar el cumplimiento de los acuerdos de la Asamblea General</div>
+                </div>
+            </div>
+            
+            <!-- Vocales -->
+            <div class="dignatario-section">
+                <div class="dignatario-header" onclick="toggleContent(this)">
+                    <h3>
+                        VOCALES
+                        <span>▼</span>
+                    </h3>
+                </div>
+                <div class="dignatario-content">
+                    <div class="funcion-item">Participar con voz y voto en las reuniones de la Junta Directiva</div>
+                    <div class="funcion-item">Integrar y coordinar las comisiones de trabajo que se establezcan</div>
+                    <div class="funcion-item">Colaborar activamente en el desarrollo de proyectos comunitarios</div>
+                    <div class="funcion-item">Representar a la Junta en eventos, actividades y reuniones interinstitucionales</div>
+                    <div class="funcion-item">Apoyar las funciones de los demás dignatarios según se requiera</div>
+                    <div class="funcion-item">Promover la participación activa de la comunidad en las actividades</div>
+                    <div class="funcion-item">Servir como enlace entre la comunidad y la Junta Directiva</div>
+                    <div class="funcion-item">Colaborar en la organización de eventos y actividades comunitarias</div>
+                </div>
+            </div>
+            
+            
+            
+            <center>
+                <button class="print-btn" onclick="window.print()">🖨️ Imprimir Funciones</button>
+            </center>
+        </div>
+    </div>
+
+    <script>
+        function toggleContent(element) {
+            const content = element.nextElementSibling;
+            const allContents = document.querySelectorAll('.dignatario-content');
+            const allHeaders = document.querySelectorAll('.dignatario-header');
+            
+            // Cerrar todos los demás
+            allContents.forEach(item => {
+                if (item !== content) {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Abrir/cerrar el actual
+            content.classList.toggle('active');
+            
+            // Actualizar flechas
+            allHeaders.forEach(header => {
+                const arrow = header.querySelector('span');
+                if (header.nextElementSibling.classList.contains('active')) {
+                    arrow.textContent = '▲';
+                } else {
+                    arrow.textContent = '▼';
+                }
+            });
+        }
+        
+        // Abrir el primero por defecto
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.dignatario-header').click();
+        });
+    </script>
+</body>
+</html>
