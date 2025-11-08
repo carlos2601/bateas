@@ -33,19 +33,30 @@
             align-items: center;
         }
 
-        /* Hoja del documento */
+        /* Hoja del documento - TAMAÑO CARTA */
         .document-page {
             width: 21.59cm;
-            height: 27.94cm;
+            height: 27.94cm; /* Tamaño carta */
             background-color: white;
-            padding: 2cm 3cm;
+            padding: 1.8cm 2.5cm;
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
         }
         
-        /* Fondo con logo - AJUSTES PARA MAYOR VISIBILIDAD */
+        /* Numeración de páginas */
+        .page-number {
+            position: absolute;
+            bottom: 1.5cm;
+            right: 2.5cm;
+            font-size: 11pt;
+            font-weight: bold;
+            color: #000;
+            z-index: 2;
+        }
+        
+        /* Fondo con logo - MÁS CLARO */
         .page-background {
             position: absolute;
             top: 0;
@@ -59,19 +70,13 @@
             z-index: 0;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-        }
-        
-        /* Brillo diferente para pantalla vs impresión */
-        @media screen {
-            .page-background {
-                opacity: 0.25;
-                filter: brightness(1.2);
-            }
+            opacity: 0.2; /* Logo clarito por defecto */
+            filter: brightness(1.2);
         }
         
         @media print {
             .page-background {
-                opacity: 0.15;
+                opacity: 0.15; /* Logo más claro para impresión */
             }
         }
         
@@ -102,44 +107,56 @@
             font-size: 14pt;
             font-weight: bold;
             text-align: center;
-            margin: 0.1cm 0 0.1cm 0;
+            margin: 0.3cm 0 0.5cm 0;
             text-decoration: underline;
         }
         
         .content {
-            font-size: 13pt;
+            font-size: 12.5pt;
             text-align: justify;
-            line-height: 1.5;
+            line-height: 1.6;
             flex-grow: 1;
         }
         
         h2 {
             font-size: 13pt;
-            margin: 0.8cm 0 0.3cm 0;
+            margin: 0.7cm 0 0.4cm 0;
             color: #2c3e50;
             font-weight: bold;
         }
         
         ul {
-            margin: 0.3cm 0 0.3cm 1.5cm;
+            margin: 0.4cm 0 0.4cm 1.5cm;
             padding: 0;
         }
         
         li {
-            margin-bottom: 0.2cm;
-            line-height: 1.2;
+            margin-bottom: 0.25cm;
+            line-height: 1.5;
         }
         
         .signature-section {
-            margin-top: 1cm;
+            margin-top: 1.2cm;
+        }
+        
+        .signature-center {
+            text-align: center;
+            margin-top: 1.8cm;
         }
         
         .signature-line {
-            margin-top: 1.5cm;
+            margin: 0 auto;
             border-top: 1px solid #333;
             width: 60%;
             text-align: center;
-            padding-top: 5px;
+            padding-top: 8px;
+            font-size: 12.5pt;
+        }
+        
+        .cc-centered {
+            margin-top: 15px;
+            font-size: 12.5pt;
+            text-align: center;
         }
         
         .footer {
@@ -160,32 +177,11 @@
             gap: 20px;
             z-index: 100;
         }
-        
-        .action-button {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14pt;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            font-weight: bold;
-            font-family: Tahoma, sans-serif;
-        }
-        
-        .back-button {
-            background: #e74c3c;
-        }
-        
-        .print-button {
-            background: #3498db;
-        }
 
         .logout-btn {
             background: #e74c3c;
             color: white;
-            padding: 8px 20px;
+            padding: 10px 22px;
             border-radius: 4px;
             font-weight: 600;
             text-decoration: none;
@@ -193,7 +189,8 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             border: none;
             cursor: pointer;
-            min-width: 120px;
+            min-width: 130px;
+            font-size: 13pt;
         }
 
         .logout-btn:hover {
@@ -201,11 +198,10 @@
             transform: translateY(-1px);
         }
 
-
         .panel-btn {
             background: #3498db;
             color: white;
-            padding: 8px 20px;
+            padding: 10px 22px;
             border-radius: 4px;
             font-weight: 600;
             text-decoration: none;
@@ -213,13 +209,14 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             border: none;
             cursor: pointer;
-            min-width: 120px;
+            min-width: 130px;
+            font-size: 13pt;
         }
 
         .print-btn {
             background: #2ecc71;
             color: white;
-            padding: 8px 20px;
+            padding: 10px 22px;
             border-radius: 4px;
             font-weight: 600;
             text-decoration: none;
@@ -227,34 +224,21 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             border: none;
             cursor: pointer;
-            min-width: 120px;
+            min-width: 130px;
+            font-size: 13pt;
         }
 
-        .logout-btn {
-            background: #e74c3c;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 4px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border: none;
-            cursor: pointer;
-            min-width: 120px;
-        }
-
-
-      
-        /* Configuración de impresión */
+        /* Configuración de impresión - TAMAÑO CARTA */
         @media print {
             body {
                 background: none !important;
                 padding: 0 !important;
+                margin: 0 !important;
             }
             
             .pages-container {
                 gap: 0 !important;
+                margin: 0 !important;
             }
             
             .button-container {
@@ -264,8 +248,10 @@
             .document-page {
                 box-shadow: none !important;
                 margin: 0 !important;
+                padding: 1.8cm 2.5cm !important;
                 page-break-after: always !important;
                 height: 27.94cm !important;
+                width: 21.59cm !important;
                 break-inside: avoid !important;
             }
             
@@ -273,9 +259,117 @@
                 page-break-after: auto !important;
             }
             
+            .page-background {
+                opacity: 0.15 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .page-number {
+                position: absolute;
+                bottom: 1.5cm;
+                right: 2.5cm;
+                font-size: 11pt;
+                font-weight: bold;
+                color: #000;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
             @page {
                 size: letter;
-                margin: 0cm 0cm;
+                margin: 0 !important;
+                marks: none !important;
+            }
+        }
+
+        /* Estilos responsivos para dispositivos móviles */
+        @media screen and (max-width: 768px) {
+            .pages-container {
+                max-width: 100%;
+                padding: 0 10px;
+            }
+            
+            .document-page {
+                width: 100%;
+                height: auto;
+                min-height: auto;
+                padding: 1.5cm;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            
+            .page-number {
+                position: relative;
+                bottom: auto;
+                right: auto;
+                text-align: center;
+                margin-top: 20px;
+            }
+            
+            h1 {
+                font-size: 13pt;
+            }
+            
+            .document-title {
+                font-size: 13pt;
+            }
+            
+            .content {
+                font-size: 12pt;
+                line-height: 1.5;
+            }
+            
+            h2 {
+                font-size: 12pt;
+            }
+            
+            .button-container {
+                position: relative;
+                bottom: auto;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            }
+            
+            .panel-btn, .print-btn, .logout-btn {
+                min-width: 110px;
+                padding: 8px 16px;
+                font-size: 11pt;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .document-page {
+                padding: 1.2cm;
+            }
+            
+            h1 {
+                font-size: 12pt;
+            }
+            
+            .document-title {
+                font-size: 12pt;
+            }
+            
+            .content {
+                font-size: 11pt;
+            }
+            
+            h2 {
+                font-size: 11pt;
+            }
+            
+            ul {
+                margin-left: 1.2cm;
+            }
+            
+            .button-container {
+                gap: 10px;
+            }
+            
+            .panel-btn, .print-btn, .logout-btn {
+                min-width: 90px;
+                padding: 7px 14px;
+                font-size: 10pt;
             }
         }
     </style>
@@ -284,11 +378,13 @@
     <div class="pages-container">
         <!-- Página 1 -->
         <div class="document-page">
+            <div class="page-number">Página 1 de 2</div>
             <div class="page-background"></div>
             <div class="content-wrapper">
                 <div class="header">
                     <h1>JUNTA DE ACCIÓN COMUNAL</h1>
-                    <p><strong>BARRIO BATEAS - PUERTO GAITÁN, META</strong></p>
+                    <h1>BARRIO BATEAS - SECTOR 3</h1>
+                    <p><strong>PUERTO GAITÁN, META</strong></p>
                 </div>
                 
                 <div class="document-title">AUTORIZACIÓN PARA EL TRATAMIENTO DE DATOS PERSONALES</div>
@@ -298,10 +394,10 @@
                     identificado(a) con <strong><span id="tipoDocumento">Cédula de Ciudadanía</span></strong> 
                     No. <strong><span id="documentoAfiliado">____________________</span></strong> expedida en 
                     <strong><span id="lugarExpedicion">____________________</span></strong>, en mi calidad de afiliado(a) 
-                    a la Junta de Acción Comunal del Barrio Bateas de Puerto Gaitán, Meta, en ejercicio de mis derechos 
+                    a la Junta de Acción Comunal del Barrio Bateas - Sector 3 de Puerto Gaitán, Meta, en ejercicio de mis derechos 
                     constitucionales y legales, <strong>MANIFIESTO</strong> que de manera libre, previa, expresa, 
                     voluntaria, informada e inequívoca <strong>AUTORIZO</strong> a la Junta de Acción Comunal del Barrio 
-                    Bateas para que realice el tratamiento de mis datos personales suministrados, de acuerdo con lo 
+                    Bateas - Sector 3 para que realice el tratamiento de mis datos personales suministrados, de acuerdo con lo 
                     establecido en la Ley 1581 de 2012 y el Decreto 1377 de 2013.</p>
                     
                     <h2>1. FINALIDAD DEL TRATAMIENTO</h2>
@@ -320,8 +416,8 @@
                     <ul>
                         <li>Nombres y apellidos completos</li>
                         <li>Número de documento de identidad</li>
-                       
-                       
+                        <li>Dirección de residencia</li>
+                        <li>Números telefónicos y dirección de correo electrónico</li>
                     </ul>
                 </div>
             </div>
@@ -329,18 +425,16 @@
         
         <!-- Página 2 -->
         <div class="document-page">
+            <div class="page-number">Página 2 de 2</div>
             <div class="page-background"></div>
             <div class="content-wrapper">
-              
-                <ul>
-                    <li>Dirección de residencia</li>
-                    <li>Números telefónicos y dirección de correo electrónico</li>
-                    <li>Fecha de nacimiento</li>
-                    <li>Información de afiliación (fecha, número de registro, etc.)</li>
-                    <li>Historial de pagos y contribuciones</li>
-                </ul>
-                
                 <div class="content">
+                    <ul>
+                        <li>Fecha de nacimiento</li>
+                        <li>Información de afiliación (fecha, número de registro, etc.)</li>
+                        <li>Historial de pagos y contribuciones</li>
+                    </ul>
+                    
                     <h2>3. DERECHOS DEL TITULAR</h2>
                     <p>Como titular de los datos, conozco que tengo derecho a:</p>
                     <ul>
@@ -354,20 +448,22 @@
                     
                     <h2>4. VIGENCIA</h2>
                     <p>La presente autorización tendrá una vigencia igual al tiempo que mantenga mi condición de afiliado(a) 
-                    a la Junta de Acción Comunal del Barrio Bateas y hasta que se cumplan las finalidades necesarias para 
+                    a la Junta de Acción Comunal del Barrio Bateas - Sector 3 y hasta que se cumplan las finalidades necesarias para 
                     el tratamiento de los datos.</p>
                     
                     <div class="signature-section">
                         <p>En constancia de lo anterior, firmo en Puerto Gaitán, Meta, a los <strong><span id="diaFirma">____</span></strong> 
                         días del mes de <strong><span id="mesFirma">____________________</span></strong> del <strong><span id="anioFirma">________</span></strong>.</p>
                         
-                        <div class="signature-line">Firma del Afiliado</div>
-                        <div style="margin-top: 10px; font-size: 13pt;">CC: _________________________</div>
+                        <div class="signature-center">
+                            <div class="signature-line">Firma del Afiliado</div>
+                            <div class="cc-centered">CC: _________________________</div>
+                        </div>
                     </div>
                     
                     <div class="footer">
-                        <p><strong>Junta de Acción Comunal Barrio Bateas</strong> - Puerto Gaitán, Meta</p>
-                        <p>Teléfono: 321 332 9108 - Correo: bateassector3@gmail.com</p>
+                        <p><strong>Junta de Acción Comunal Barrio Bateas - Sector 3</strong> - Puerto Gaitán, Meta</p>
+                        <p>Teléfono: 313 581 5787 - Correo: juntacomunalbateassector3@gmail.com</p>
                     </div>
                 </div>
             </div>
@@ -382,24 +478,16 @@
     </div>
     
     <script>
-
-function cerrarSesion() {
+        function cerrarSesion() {
             if (confirm("¿Está seguro que desea cerrar sesión?")) {
                 window.location.href = "login.html";
             }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Verificar carga de imagen de fondo con reintento
+            // Verificar carga de imagen de fondo
             const img = new Image();
             img.src = 'logo4.jpg';
-            
-            img.onload = function() {
-                document.querySelectorAll('.page-background').forEach(bg => {
-                    bg.style.opacity = '1.0';
-                    bg.style.filter = 'brightness(1.0)';
-                });
-            };
             
             img.onerror = function() {
                 const backgrounds = document.querySelectorAll('.page-background');
